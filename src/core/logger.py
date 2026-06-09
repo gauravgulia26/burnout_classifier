@@ -3,13 +3,14 @@ from pathlib import Path
 
 from rich.console import Console
 from rich.logging import RichHandler
+from src.configs.paths import LOG_DIR_PATH
 
 console = Console()
 
 
 def get_logger(
     logger_name: str,
-    log_dir: str | Path,
+    log_dir: str | Path = LOG_DIR_PATH,
 ) -> logging.Logger:
 
     log_dir = Path(log_dir)

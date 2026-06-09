@@ -7,6 +7,8 @@ from rich.progress import (
     TimeRemainingColumn,
     TransferSpeedColumn,
 )
+import json
+from pydantic import BaseModel
 
 
 def unzip_with_progress(
@@ -59,3 +61,44 @@ def unzip_with_progress(
                 progress.advance(task)
 
     return extract_to
+
+
+def dump_model_to_json(
+    model: BaseModel,
+    output_path: str | Path,
+) -> str:
+    """
+    Serialize a Pydantic model to a JSON file.
+
+    Returns:
+        Path of the generated artifact.
+    """
+    output_path = Path(output_path)
+
+    output_path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    output_path.write_text(
+        model.model_dump_json(indent=4),
+        encoding="utf-8",
+    )
+
+    return str(output_path)
+
+
+def load_json_artifact(
+    artifact_path: str | Path,
+) -> dict:
+    """
+    Load a JSON artifact as a dictionary.
+    """
+    artifact_path = Path(artifact_path)
+
+    with open(
+        artifact_path,
+        "r",
+        encoding="utf-8",
+    ) as file:
+        return json.load(file)

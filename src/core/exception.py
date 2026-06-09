@@ -1,9 +1,11 @@
 import sys
+from rich.traceback import install
 
 
 class CustomException(Exception):
 
     def __init__(self, error_message, error_detail: sys):
+        install()
         super().__init__(error_message)
 
         _, _, exc_tb = error_detail.exc_info()
