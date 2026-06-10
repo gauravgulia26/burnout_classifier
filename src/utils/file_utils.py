@@ -9,6 +9,7 @@ from rich.progress import (
 )
 import json
 from pydantic import BaseModel
+import yaml
 
 
 def unzip_with_progress(
@@ -102,3 +103,17 @@ def load_json_artifact(
         encoding="utf-8",
     ) as file:
         return json.load(file)
+
+
+def load_yaml(yaml_path: str | Path) -> dict:
+    """
+    Load YAML file and return dictionary.
+    """
+    yaml_path = Path(yaml_path)
+
+    with open(
+        yaml_path,
+        "r",
+        encoding="utf-8",
+    ) as file:
+        return yaml.safe_load(file)

@@ -1,4 +1,4 @@
-from src.core.exception import CustomException
+from src.utils.decorators import handle_exceptions
 from src.core.logger import get_logger
 from src.configs.paths import INGESTION_ARTIFACT_DIR_PATH
 from src.managers import DataIngestionConfig
@@ -16,21 +16,17 @@ class DataIngestion:
     def __init__(self, data_ingestion_config: DataIngestionConfig):
         self.data_ingestion_config = data_ingestion_config
         self.logger = get_logger(
-            logger_name="DataIngestion",
+            logger_name=data_ingestion_config.component_name,
         )
 
+    @handle_exceptions
     def __validate(self):
-        try:
-            validate_path(self.data_ingestion_config.raw_data_path)
-        except FileNotFoundError as e:
-            err = CustomException(error_message=e, error_detail=sys)
-            self.logger.error(f"Error Occured: {err}")
-            raise err
+        validate_path(self.data_ingestion_config.raw_data_path)
 
     def __save_object(self, object: DataIngestionArtifact):
         dump_model_to_json(
             model=object,
-            output_path=INGESTION_ARTIFACT_DIR_PATH / "data_ingestion.json",
+            output_path=INGESTION_ARTIFACT_DIR_PATH,
         )
         self.logger.info(f"Artifact Saved to: {INGESTION_ARTIFACT_DIR_PATH}")
 

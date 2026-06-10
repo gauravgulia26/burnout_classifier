@@ -15,5 +15,9 @@ FIGURES_DIR = "figures"
 RAW_DATA_NAME = "raw_data.csv"
 ARTIFACT_DIR = "artifacts"
 INGESTION_ARTIFACT_DIR = "ingestion_artifact"
+INGESTION_ARTIFACT = "data_ingestion.json"
 
 LOG_DIR = "logs"
+
+YAML_DIR_NAME = "configs"
+SCHEMA_YAML = "schema.yaml"
