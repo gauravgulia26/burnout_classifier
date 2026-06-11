@@ -1,4 +1,4 @@
-from src.components.data_profiling import DataProfiling, DataProfilingConfig
+from src.components.data_profiling import DataProfiler, DataProfilingConfig
 from src.configs.paths import (
     PROFILING_ARTIFACT_DIST_DIR_PATH,
     PROFILING_ARTIFACT_MISSING_VALUES_DIR_PATH,
@@ -18,8 +18,8 @@ def main():
         profile_artifact_path=PROFILING_ARTIFACT_DIR_PATH,
     )
 
-    obj = DataProfiling(profiling_config=cfg)
-    obj.run()
+    obj = DataProfiler(profiling_config=cfg)
+    obj.run(key="raw_data_path")
 
 
 if __name__ == "__main__":

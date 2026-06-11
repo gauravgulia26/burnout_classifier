@@ -22,6 +22,7 @@ stages:
    deps:
     - src/components/data_profiling.py
     - artifacts/validation_artifact/data_validation.json
+    - src/profilers/validation_profiler.py
    outs:
     - artifacts/profiling_artifacts/data_profiling_dist.json
     - artifacts/profiling_artifacts/data_profiling_missing_val.json
