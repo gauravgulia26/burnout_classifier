@@ -1,0 +1,75 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/pipeline/stage_01_ingestion.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 0ec792d99083672a3aaef04c75cc278b.dir
+      size: 7079648
+      nfiles: 3
+    - path: src/components/data_ingestion.py
+      hash: md5
+      md5: ddd34ede2bbdc81f39421fad45db51a2
+      size: 2285
+    params:
+      configs/components_params.yaml:
+        data_ingestion:
+          raw_data_path: data/raw/raw_data.csv
+    outs:
+    - path: artifacts/ingestion_artifact/data_ingestion.json
+      hash: md5
+      md5: a7770075a940496d1f657af8e9d4b5bf
+      size: 1189
+  data_validation:
+    cmd: python src/pipeline/stage_02_validation.py
+    deps:
+    - path: artifacts/ingestion_artifact/data_ingestion.json
+      hash: md5
+      md5: a7770075a940496d1f657af8e9d4b5bf
+      size: 1189
+    - path: configs/schema.yaml
+      hash: md5
+      md5: fa71b142e0e3be39a939bba832c5924b
+      size: 708
+    - path: src/components/data_validation.py
+      hash: md5
+      md5: 6a7c620b34396758ec091361ff7eb110
+      size: 1961
+    outs:
+    - path: artifacts/validation_artifact/data_validation.json
+      hash: md5
+      md5: 9881fc4061ae2f684dd41adc3511662c
+      size: 79
+  data_profiling:
+    cmd: python src/pipeline/stage_03_profiling.py
+    deps:
+    - path: artifacts/validation_artifact/data_validation.json
+      hash: md5
+      md5: 9881fc4061ae2f684dd41adc3511662c
+      size: 79
+    - path: src/components/data_profiling.py
+      hash: md5
+      md5: 3c4c7da23cef935f064b97cfd702adda
+      size: 5328
+    outs:
+    - path: artifacts/profiling_artifacts/data_profiling.json
+      hash: md5
+      md5: c3f61fb6108fa7d6ca417e70a805b000
+      size: 550
+    - path: artifacts/profiling_artifacts/data_profiling_dist.json
+      hash: md5
+      md5: f91261223a718c689f2df7e95ca6bad5
+      size: 4482
+    - path: artifacts/profiling_artifacts/data_profiling_missing_val.json
+      hash: md5
+      md5: b657ba19334b0bd2d823a99015e58b87
+      size: 1556
+    - path: artifacts/profiling_artifacts/data_profiling_stats.json
+      hash: md5
+      md5: afa8fb462fea9d4f0de7cd99e6699654
+      size: 2412
+    - path: artifacts/profiling_artifacts/data_profiling_summary.json
+      hash: md5
+      md5: 517f009f7aa0df54e2c4297bd030fbde
+      size: 163
