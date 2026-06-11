@@ -8,7 +8,6 @@ from src.entity.artifacts.data_ingestion_artifact import (
     DataIngestionMetadataArtifact,
 )
 from src.utils.file_utils import dump_model_to_json
-import sys
 import pandas as pd
 
 

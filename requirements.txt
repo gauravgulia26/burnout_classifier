@@ -20,4 +20,6 @@ seaborn
 pydantic
 dvc
 mlflow
+config-box
+python-box
 -e .

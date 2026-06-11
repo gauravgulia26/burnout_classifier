@@ -1,0 +1,30 @@
+stages:
+  data_ingestion:
+   cmd: python src/pipeline/stage_01_ingestion.py
+   deps: 
+   - src/components/data_ingestion.py
+   - data/raw
+   params:
+    - configs/components_params.yaml:
+       - data_ingestion
+   outs:
+     - artifacts/ingestion_artifact/data_ingestion.json
+  data_validation:
+    cmd: python src/pipeline/stage_02_validation.py
+    deps:
+      - src/components/data_validation.py
+      - artifacts/ingestion_artifact/data_ingestion.json
+      - configs/schema.yaml
+    outs:
+    - artifacts/validation_artifact/data_validation.json
+  data_profiling:
+   cmd: python src/pipeline/stage_03_profiling.py
+   deps:
+    - src/components/data_profiling.py
+    - artifacts/validation_artifact/data_validation.json
+   outs:
+    - artifacts/profiling_artifacts/data_profiling_dist.json
+    - artifacts/profiling_artifacts/data_profiling_missing_val.json
+    - artifacts/profiling_artifacts/data_profiling_stats.json
+    - artifacts/profiling_artifacts/data_profiling_summary.json
+    - artifacts/profiling_artifacts/data_profiling.json

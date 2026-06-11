@@ -1,0 +1,2 @@
+data_ingestion:
+  raw_data_path: data/raw/raw_data.csv
