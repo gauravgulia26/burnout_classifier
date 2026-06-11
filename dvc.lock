@@ -50,8 +50,12 @@ stages:
       size: 79
     - path: src/components/data_profiling.py
       hash: md5
-      md5: 3c4c7da23cef935f064b97cfd702adda
-      size: 5328
+      md5: 163fb11d84eeb4ddb9bcd3587823f2e6
+      size: 2431
+    - path: src/profilers/validation_profiler.py
+      hash: md5
+      md5: 8bc28f64b12a4480ce8673c4738509b1
+      size: 3509
     outs:
     - path: artifacts/profiling_artifacts/data_profiling.json
       hash: md5
