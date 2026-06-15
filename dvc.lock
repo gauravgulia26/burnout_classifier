@@ -77,3 +77,19 @@ stages:
       hash: md5
       md5: 517f009f7aa0df54e2c4297bd030fbde
       size: 163
+  feature_engineer:
+    cmd: python src/pipeline/stage_04_feature_engineer.py
+    deps:
+    - path: artifacts/validation_artifact/data_validation.json
+      hash: md5
+      md5: 9881fc4061ae2f684dd41adc3511662c
+      size: 79
+    - path: src/features/make_features.py
+      hash: md5
+      md5: 5f27eeb96fefda1df6cac363a1f3f171
+      size: 5138
+    outs:
+    - path: artifacts/feature_engineer_artifact/feature_engineer.json
+      hash: md5
+      md5: b4c93ba3780417caf58b30ec6353583f
+      size: 108
