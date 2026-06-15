@@ -29,3 +29,11 @@ stages:
     - artifacts/profiling_artifacts/data_profiling_stats.json
     - artifacts/profiling_artifacts/data_profiling_summary.json
     - artifacts/profiling_artifacts/data_profiling.json
+  feature_engineer:
+   cmd: python src/pipeline/stage_04_feature_engineer.py
+   deps:
+     - src/features/make_features.py
+     - artifacts/validation_artifact/data_validation.json
+   outs:
+      - artifacts/feature_engineer_artifact/feature_engineer.json
+    

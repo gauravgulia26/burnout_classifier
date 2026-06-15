@@ -41,3 +41,7 @@ PROFILING_ARTIFACT_STATS_DIR_PATH = (
 PROFILING_ARTIFACT_DIR_PATH = (
     ARTIFACT_DIR_PATH / PROFILING_ARTIFACT_DIR / "data_profiling.json"
 )
+
+FEATURE_ENGINEER_ARTIFACT_DIR_PATH = (
+    ARTIFACT_DIR_PATH / "feature_engineer_artifact" / "feature_engineer.json"
+)
