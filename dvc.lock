@@ -86,8 +86,8 @@ stages:
       size: 79
     - path: src/features/make_features.py
       hash: md5
-      md5: 5f27eeb96fefda1df6cac363a1f3f171
-      size: 5138
+      md5: e6a8448d5bb71498d4eeb68e0dca7203
+      size: 5182
     outs:
     - path: artifacts/feature_engineer_artifact/feature_engineer.json
       hash: md5
