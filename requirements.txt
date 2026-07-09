@@ -22,4 +22,7 @@ dvc
 mlflow
 config-box
 python-box
+xgboost-cpu
+catboost
+psycopg2
 -e .

@@ -57,6 +57,8 @@ class FeatureEngineer:
 
         df = self._add_learning_retention_gap(df)
 
+        df = df.drop(columns="Student_ID")
+
         self.logger.info("Saving DF")
 
         df.to_csv(self.output_data_path, index=False)

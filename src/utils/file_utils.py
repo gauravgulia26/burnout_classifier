@@ -118,3 +118,46 @@ def load_yaml(yaml_path: str | Path) -> Box:
         encoding="utf-8",
     ) as file:
         return Box(yaml.safe_load(file))
+
+
+def ensure_parent_dir(path: Path) -> None:
+    """
+    Create the parent directory for the given path if it does not exist.
+
+    Parameters
+    ----------
+    path : Path
+        Path to a file or directory whose parent directory should exist.
+
+    Raises
+    ------
+    TypeError
+        If `path` is not a pathlib.Path instance.
+    ValueError
+        If the path has no parent.
+    RuntimeError
+        If the directory cannot be created.
+    """
+    if not isinstance(path, Path):
+        raise TypeError(
+            f"'path' must be a pathlib.Path object, got {type(path).__name__}."
+        )
+
+    parent = path.parent
+
+    if parent == Path():
+        raise ValueError(f"Unable to determine parent directory for '{path}'.")
+
+    try:
+        parent.mkdir(parents=True, exist_ok=True)
+        print("Ensured directory exists:", parent)
+
+    except PermissionError as exc:
+        print("Permission denied while creating directory: %s", parent)
+        raise RuntimeError(
+            f"Permission denied while creating directory '{parent}'."
+        ) from exc
+
+    except OSError as exc:
+        print("Failed to create directory:", parent)
+        raise RuntimeError(f"Failed to create directory '{parent}'.") from exc

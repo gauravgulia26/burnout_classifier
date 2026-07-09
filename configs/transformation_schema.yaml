@@ -1,0 +1,14 @@
+nominal_features: ["Major_Category", "Primary_Use_Case"]
+ordinal_features: [
+    "Year_of_Study",
+    "Prompt_Engineering_Skill",
+    "Paid_Subscription",
+    "Institutional_Policy",
+]
+ordinal_categories: [
+    ["Freshman", "Sophomore", "Junior", "Senior", "Graduate"],
+    ["Beginner", "Intermediate", "Advanced"],
+    [False, True],
+    ["Strict_Ban", "Allowed_With_Citation", "Actively_Encouraged"],
+]
+test_size: 0.2
