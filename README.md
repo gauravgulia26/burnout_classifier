@@ -12,6 +12,25 @@ The project is being built with a strong emphasis on:
 
 The goal is not just to train a model, but to build a complete machine learning system that can evolve into a production-ready solution with tools such as DVC, MLflow, automated pipelines, and experiment tracking.
 
+## Run the project
+
+Create an environment with Python 3.12, install dependencies, then train the full pipeline:
+
+```bash
+pip install -r requirements.txt
+python main.py
+```
+
+This runs ingestion, schema validation, profiling, feature engineering, transformation, training, and held-out evaluation. It writes the inference-ready bundle to `models/burnout_classifier.joblib` and evaluation metrics to `artifacts/model_artifact/model_training.json`.
+
+To predict from a CSV containing the raw input columns (the target column is optional):
+
+```bash
+python src/modeling/predict.py input.csv --predictions-path predictions.csv
+```
+
+Run automated checks with `python -m pytest -q`. DVC users can reproduce individual stages with `dvc repro`.
+
 ---
 
 # 🏗️ Project Structure

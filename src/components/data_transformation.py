@@ -1,27 +1,25 @@
-from src.entity.configs import DataTransformationConfig
-from src.entity.artifacts.data_transformation_artifact import DataTransformationArtifact
-from src.core.logger import get_logger
-from src.utils.file_utils import load_yaml, dump_model_to_json
-from src.utils.decorators import handle_exceptions
-
 from typing import Tuple
 
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split
-from sklearn import set_config
-
+import joblib
 import pandas as pd
+from sklearn import set_config
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+
+from src.core.logger import get_logger
+from src.entity.artifacts.data_transformation_artifact import DataTransformationArtifact
+from src.entity.configs import DataTransformationConfig
+from src.utils.decorators import handle_exceptions
+from src.utils.file_utils import dump_model_to_json, load_yaml
 
 
 class DataTransformation:
     def __init__(self, data_transformation_config: DataTransformationConfig):
         self.config = data_transformation_config
         self.logger = get_logger(logger_name="DataTransformation")
-        self.yaml_file = load_yaml(
-            data_transformation_config.transformation_schema_path
-        )
+        self.yaml_file = load_yaml(data_transformation_config.transformation_schema_path)
 
     def __load_data(self) -> pd.DataFrame:
         self.logger.info("Reading Data")
@@ -65,20 +63,18 @@ class DataTransformation:
         self.logger.info("Transforming Y")
         df = self.__load_data()
         target_encoder = OrdinalEncoder(categories=[["Low", "Medium", "High"]])
-        y = target_encoder.fit_transform(df[["Burnout_Risk_Level"]])
-        return y
+        encoded = target_encoder.fit_transform(df[[self.config.target_variable]])
+        return pd.Series(encoded.to_numpy().ravel(), name=self.config.target_variable)
 
     def save_artifacts(self, transformation_artifact: DataTransformationArtifact):
         dump_model_to_json(
             model=transformation_artifact,
             output_path=self.config.transformation_artifact_save_path,
         )
-        self.logger.info(
-            f"Artifact Saved to {self.config.transformation_artifact_save_path}"
-        )
+        self.logger.info(f"Artifact Saved to {self.config.transformation_artifact_save_path}")
 
     @handle_exceptions
-    def run(self):
+    def run(self) -> DataTransformationArtifact:
         set_config(display="diagram", transform_output="pandas")
         df, x, y = self.__perform_split()
         pipeline = self.__get_pipeline()
@@ -90,13 +86,28 @@ class DataTransformation:
             transformed_y,
             test_size=self.yaml_file["test_size"],
             stratify=transformed_y,
+            random_state=42,
         )
         try:
+            self.config.x_train_save_path.parent.mkdir(parents=True, exist_ok=True)
             x_train.to_parquet(self.config.x_train_save_path, index=False)
-            y_train.to_parquet(self.config.y_train_save_path, index=False)
+            y_train.to_frame().to_parquet(self.config.y_train_save_path, index=False)
             x_test.to_parquet(self.config.x_test_save_path, index=False)
-            y_test.to_parquet(self.config.y_test_save_path, index=False)
+            y_test.to_frame().to_parquet(self.config.y_test_save_path, index=False)
         except Exception as e:
             self.logger.error(f"Error Occured: {e}")
             raise e
         self.logger.info("Transformation Completed")
+        preprocessor_path = (
+            self.config.transformation_artifact_save_path.parent / "preprocessor.joblib"
+        )
+        joblib.dump(pipeline, preprocessor_path)
+        artifact = DataTransformationArtifact(
+            x_train_path=self.config.x_train_save_path,
+            x_test_path=self.config.x_test_save_path,
+            y_train_path=self.config.y_train_save_path,
+            y_test_path=self.config.y_test_save_path,
+            pipeline_preprocessor_path=preprocessor_path,
+        )
+        self.save_artifacts(artifact)
+        return artifact

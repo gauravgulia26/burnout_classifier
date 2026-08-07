@@ -36,4 +36,26 @@ stages:
      - artifacts/validation_artifact/data_validation.json
    outs:
       - artifacts/feature_engineer_artifact/feature_engineer.json
-    
+  data_transformation:
+    cmd: python src/pipeline/stage_05_data_transformation.py
+    deps:
+      - src/components/data_transformation.py
+      - artifacts/feature_engineer_artifact/feature_engineer.json
+      - configs/transformation_schema.yaml
+    outs:
+      - artifacts/transformation_artifact/data_transformation.json
+      - artifacts/transformation_artifact/preprocessor.joblib
+      - data/processed/x_train.parquet
+      - data/processed/x_test.parquet
+      - data/processed/y_train.parquet
+      - data/processed/y_test.parquet
+  model_training:
+    cmd: python src/pipeline/stage_06_model_training.py
+    deps:
+      - src/pipeline/stage_06_model_training.py
+      - artifacts/transformation_artifact/data_transformation.json
+      - artifacts/transformation_artifact/preprocessor.joblib
+      - configs/experiment_params.yaml
+    outs:
+      - artifacts/model_artifact/model_training.json
+      - models/burnout_classifier.joblib

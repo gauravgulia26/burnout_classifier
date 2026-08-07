@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "src"
 version = "0.0.1"
-description = "A short description of the project."
+description = "Reproducible student burnout-risk classification pipeline."
 authors = [
   { name = "Gourav" },
 ]
@@ -16,6 +16,19 @@ classifiers = [
     "License :: OSI Approved :: BSD License"
 ]
 requires-python = "~=3.12.0"
+dependencies = [
+  "joblib",
+  "numpy",
+  "pandas",
+  "pyarrow",
+  "pydantic",
+  "python-box",
+  "PyYAML",
+  "rich",
+  "scikit-learn",
+  "typer",
+  "xgboost-cpu",
+]
 
 
 [tool.ruff]
@@ -29,4 +42,3 @@ extend-select = ["I"]  # Add import sorting
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
 force-sort-within-sections = true
-

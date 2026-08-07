@@ -86,10 +86,78 @@ stages:
       size: 79
     - path: src/features/make_features.py
       hash: md5
-      md5: e6a8448d5bb71498d4eeb68e0dca7203
-      size: 5182
+      md5: fce26e33c3cee4ccc1aad14421945f71
+      size: 5298
     outs:
     - path: artifacts/feature_engineer_artifact/feature_engineer.json
       hash: md5
       md5: b4c93ba3780417caf58b30ec6353583f
       size: 108
+  data_transformation:
+    cmd: python src/pipeline/stage_05_data_transformation.py
+    deps:
+    - path: artifacts/feature_engineer_artifact/feature_engineer.json
+      hash: md5
+      md5: b4c93ba3780417caf58b30ec6353583f
+      size: 108
+    - path: configs/transformation_schema.yaml
+      hash: md5
+      md5: 1fdbf94f962c54f4c3ac008f930de376
+      size: 419
+    - path: src/components/data_transformation.py
+      hash: md5
+      md5: 4d811c1c23216df6c9d56a5e8cd042ef
+      size: 4587
+    outs:
+    - path: artifacts/transformation_artifact/data_transformation.json
+      hash: md5
+      md5: d271a52a6037e9aae3eed25e5a54d105
+      size: 515
+    - path: artifacts/transformation_artifact/preprocessor.joblib
+      hash: md5
+      md5: 09db5c5b2ee879bb11eb25ac58075549
+      size: 7645
+    - path: data/processed/x_test.parquet
+      hash: md5
+      md5: 3be1e4c3edb31d73c11a88a181786cba
+      size: 868257
+    - path: data/processed/x_train.parquet
+      hash: md5
+      md5: b72833554f8180a4d35e1687afcf0aa2
+      size: 2955443
+    - path: data/processed/y_test.parquet
+      hash: md5
+      md5: 2611b50e9b8d54d5282941927c168919
+      size: 3850
+    - path: data/processed/y_train.parquet
+      hash: md5
+      md5: e520c4e44cf7844b122873c66e2b490a
+      size: 11501
+  model_training:
+    cmd: python src/pipeline/stage_06_model_training.py
+    deps:
+    - path: artifacts/transformation_artifact/data_transformation.json
+      hash: md5
+      md5: d271a52a6037e9aae3eed25e5a54d105
+      size: 515
+    - path: artifacts/transformation_artifact/preprocessor.joblib
+      hash: md5
+      md5: 09db5c5b2ee879bb11eb25ac58075549
+      size: 7645
+    - path: configs/experiment_params.yaml
+      hash: md5
+      md5: 328255460d210caa6897d439aca4e39f
+      size: 1749
+    - path: src/pipeline/stage_06_model_training.py
+      hash: md5
+      md5: 99aeaa7434f1e1d52914b3ca967659f6
+      size: 2558
+    outs:
+    - path: artifacts/model_artifact/model_training.json
+      hash: md5
+      md5: f2afa96b6120a0cbf04d604d36b458e9
+      size: 1054
+    - path: models/burnout_classifier.joblib
+      hash: md5
+      md5: 1ae604fadbce3ffcb0fa8e17f784f057
+      size: 189973771

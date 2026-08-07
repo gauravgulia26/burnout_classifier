@@ -1,11 +1,12 @@
-import pandas as pd
+from pathlib import Path
 
-from src.entity.artifacts.feature_engineer_artifact import FeatureEngineerArtifact
+import pandas as pd
+from pydantic import BaseModel
+
 from src.core.logger import get_logger
+from src.entity.artifacts.feature_engineer_artifact import FeatureEngineerArtifact
 from src.utils.decorators import handle_exceptions
 from src.utils.file_utils import dump_model_to_json
-from pathlib import Path
-from pydantic import BaseModel
 
 
 class FeatureEngineer:
@@ -13,9 +14,7 @@ class FeatureEngineer:
     Creates domain-specific features for burnout prediction.
     """
 
-    def __init__(
-        self, raw_data_path: Path, output_data_path: Path, artifact_save_path: Path
-    ):
+    def __init__(self, raw_data_path: Path, output_data_path: Path, artifact_save_path: Path):
         """
         Args:
             raw_data_path (Path): Posix Raw Data Path
@@ -34,30 +33,7 @@ class FeatureEngineer:
         Apply all feature engineering steps.
         """
         self.logger.info("Generating Custom Features")
-        df = pd.read_csv(self.raw_data_path)
-        df = df.copy()
-
-        df = self._add_gpa_change(df)
-
-        df = self._add_ai_dependency_gap(df)
-
-        df = self._add_study_efficiency(df)
-
-        df = self._add_ai_productivity_score(df)
-
-        df = self._add_retention_efficiency(df)
-
-        df = self._add_burnout_pressure_score(df)
-
-        df = self._add_academic_resilience(df)
-
-        df = self._add_tool_utilization_efficiency(df)
-
-        df = self._add_ai_reliance_ratio(df)
-
-        df = self._add_learning_retention_gap(df)
-
-        df = df.drop(columns="Student_ID")
+        df = self.engineer_dataframe(pd.read_csv(self.raw_data_path))
 
         self.logger.info("Saving DF")
 
@@ -69,6 +45,21 @@ class FeatureEngineer:
 
         self._save_model(model=obj)
         return obj
+
+    def engineer_dataframe(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Apply the same deterministic feature contract used at training time."""
+        df = dataframe.copy()
+        df = self._add_gpa_change(df)
+        df = self._add_ai_dependency_gap(df)
+        df = self._add_study_efficiency(df)
+        df = self._add_ai_productivity_score(df)
+        df = self._add_retention_efficiency(df)
+        df = self._add_burnout_pressure_score(df)
+        df = self._add_academic_resilience(df)
+        df = self._add_tool_utilization_efficiency(df)
+        df = self._add_ai_reliance_ratio(df)
+        df = self._add_learning_retention_gap(df)
+        return df.drop(columns="Student_ID", errors="ignore")
 
     @handle_exceptions
     def _save_model(self, model: BaseModel):
@@ -85,9 +76,7 @@ class FeatureEngineer:
     def _add_ai_dependency_gap(self, df: pd.DataFrame) -> pd.DataFrame:
         self.logger.info("Generating Ai Dependency Gap")
 
-        df["ai_dependency_gap"] = (
-            df["Perceived_AI_Dependency"] - df["Weekly_GenAI_Hours"]
-        )
+        df["ai_dependency_gap"] = df["Perceived_AI_Dependency"] - df["Weekly_GenAI_Hours"]
 
         return df
 
@@ -103,9 +92,7 @@ class FeatureEngineer:
     def _add_ai_productivity_score(self, df: pd.DataFrame) -> pd.DataFrame:
         self.logger.info("Generating Productivity Score")
 
-        df["ai_productivity_score"] = df["gpa_change"] / (
-            df["Weekly_GenAI_Hours"] + self.EPSILON
-        )
+        df["ai_productivity_score"] = df["gpa_change"] / (df["Weekly_GenAI_Hours"] + self.EPSILON)
 
         return df
 
@@ -163,8 +150,6 @@ class FeatureEngineer:
         df: pd.DataFrame,
     ) -> pd.DataFrame:
         self.logger.info("Generating Add Learning Retention Gap")
-        df["learning_retention_gap"] = (
-            df["Post_Semester_GPA"] - df["Skill_Retention_Score"]
-        )
+        df["learning_retention_gap"] = df["Post_Semester_GPA"] - df["Skill_Retention_Score"]
 
         return df
