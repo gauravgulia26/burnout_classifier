@@ -7,6 +7,7 @@ from src.pipeline.stage_02_validation import main as validate
 from src.pipeline.stage_03_profiling import main as profile
 from src.pipeline.stage_04_feature_engineer import main as engineer
 from src.pipeline.stage_05_data_transformation import main as transform
+from src.pipeline.stage_06_experiment import main as experiment
 from src.pipeline.stage_06_model_training import main as train
 
 
@@ -17,6 +18,7 @@ def main() -> dict:
     profile()
     engineer()
     transform()
+    experiment()
     return train()
 
 

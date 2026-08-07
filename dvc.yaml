@@ -49,12 +49,29 @@ stages:
       - data/processed/x_test.parquet
       - data/processed/y_train.parquet
       - data/processed/y_test.parquet
+  model_experiment:
+    cmd: python src/pipeline/stage_06_experiment.py
+    deps:
+      - src/pipeline/stage_06_experiment.py
+      - src/experiment/runner.py
+      - src/experiment/model_factory.py
+      - src/experiment/model_registry.py
+      - src/tracking/mlflow_tracker.py
+      - artifacts/transformation_artifact/data_transformation.json
+      - configs/experiment_params.yaml
+    outs:
+      - artifacts/experiment_artifact/experiment.json
   model_training:
     cmd: python src/pipeline/stage_06_model_training.py
     deps:
       - src/pipeline/stage_06_model_training.py
+      - src/components/model_trainer.py
+      - src/experiment/model_factory.py
+      - src/experiment/model_registry.py
+      - src/tracking/mlflow_tracker.py
       - artifacts/transformation_artifact/data_transformation.json
       - artifacts/transformation_artifact/preprocessor.joblib
+      - artifacts/experiment_artifact/experiment.json
       - configs/experiment_params.yaml
     outs:
       - artifacts/model_artifact/model_training.json

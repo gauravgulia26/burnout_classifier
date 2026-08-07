@@ -25,4 +25,5 @@ python-box
 xgboost-cpu
 catboost
 psycopg2
+dagshub
 -e .

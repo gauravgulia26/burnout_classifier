@@ -47,3 +47,4 @@ TRANSFORMATION_ARTIFACT_DIR_PATH = (
 )
 
 MODEL_ARTIFACT_DIR_PATH = ARTIFACT_DIR_PATH / "model_artifact" / "model_training.json"
+EXPERIMENT_ARTIFACT_DIR_PATH = ARTIFACT_DIR_PATH / "experiment_artifact" / "experiment.json"

@@ -191,6 +191,8 @@ cython_debug/
 .pypirc
 
 artifacts/
+!src/entity/artifacts/
+!src/entity/artifacts/*.py
 models/*.joblib
 .vscode/
 notebooks/

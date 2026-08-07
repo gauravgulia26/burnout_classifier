@@ -23,6 +23,14 @@ python main.py
 
 This runs ingestion, schema validation, profiling, feature engineering, transformation, training, and held-out evaluation. It writes the inference-ready bundle to `models/burnout_classifier.joblib` and evaluation metrics to `artifacts/model_artifact/model_training.json`.
 
+Before running model selection, start an MLflow server and set its URL in `configs/experiment_params.yaml` under `experiment.tracking.tracking_uri`:
+
+```bash
+mlflow server --host 127.0.0.1 --port 5000
+```
+
+The experiment stage runs each enabled model once with its estimator default parameters using cross-validation, logs the defaults and metrics to MLflow, and writes only the winning selection to `artifacts/experiment_artifact/experiment.json`. Final training consumes that artifact, trains exactly once, and logs the final model to MLflow.
+
 To predict from a CSV containing the raw input columns (the target column is optional):
 
 ```bash
