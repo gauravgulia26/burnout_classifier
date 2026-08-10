@@ -1,8 +1,8 @@
 from src.constants import (
-    YAML_DIR_NAME,
-    SCHEMA_YAML,
     COMPONENT_YAML,
+    SCHEMA_YAML,
     TRANSFORMATION_YAML,
+    YAML_DIR_NAME,
 )
 
 from .base_paths import PROJECT_ROOT

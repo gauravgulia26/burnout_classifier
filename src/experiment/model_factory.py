@@ -4,8 +4,9 @@ Factory for creating machine learning model instances.
 
 from typing import Any
 
-from src.experiment.model_registry import MODEL_REGISTRY
 from sklearn.base import BaseEstimator
+
+from src.experiment.model_registry import MODEL_REGISTRY
 
 
 class ModelFactory:

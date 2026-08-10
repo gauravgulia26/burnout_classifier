@@ -1,4 +1,5 @@
-from src.constants import MLFLOW_DB_NAME, DATABASE_DIR
+from src.constants import DATABASE_DIR, MLFLOW_DB_NAME
+
 from .base_paths import PROJ_ROOT
 
 DATABASE_DIR_PATH = PROJ_ROOT / DATABASE_DIR

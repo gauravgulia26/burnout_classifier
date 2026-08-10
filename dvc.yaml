@@ -61,10 +61,23 @@ stages:
       - configs/experiment_params.yaml
     outs:
       - artifacts/experiment_artifact/experiment.json
-  model_training:
-    cmd: python src/pipeline/stage_06_model_training.py
+  model_tuning:
+    cmd: python src/pipeline/stage_08_model_tuning.py
     deps:
-      - src/pipeline/stage_06_model_training.py
+      - src/pipeline/stage_08_model_tuning.py
+      - src/components/model_tuner.py
+      - src/experiment/model_factory.py
+      - src/experiment/model_registry.py
+      - src/tracking/mlflow_tracker.py
+      - artifacts/transformation_artifact/data_transformation.json
+      - artifacts/experiment_artifact/experiment.json
+      - configs/experiment_params.yaml
+    outs:
+      - artifacts/model_tuning_artifact/model_tuning.json
+  model_training:
+    cmd: python src/pipeline/stage_07_model_training.py
+    deps:
+      - src/pipeline/stage_07_model_training.py
       - src/components/model_trainer.py
       - src/experiment/model_factory.py
       - src/experiment/model_registry.py
@@ -72,6 +85,7 @@ stages:
       - artifacts/transformation_artifact/data_transformation.json
       - artifacts/transformation_artifact/preprocessor.joblib
       - artifacts/experiment_artifact/experiment.json
+      - artifacts/model_tuning_artifact/model_tuning.json
       - configs/experiment_params.yaml
     outs:
       - artifacts/model_artifact/model_training.json

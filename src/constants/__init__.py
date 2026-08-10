@@ -31,6 +31,9 @@ PROFILING_DISTRIBUTION_ARTIFACT = "data_profiling_dist.json"
 
 TRANSFORMATION_ARTIFACT_DIR = "transformation_artifact"
 TRANSFORMATION_ARTIFACT = "data_transformation.json"
+
+TUNING_ARTIFACT_DIR = "model_tuning_artifact"
+TUNING_ARTIFACT = "model_tuning.json"
 LOG_DIR = "logs"
 
 YAML_DIR_NAME = "configs"

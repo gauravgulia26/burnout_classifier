@@ -1,10 +1,10 @@
 from src.components.data_profiling import DataProfiler, DataProfilingConfig
 from src.configs.paths import (
+    PROFILING_ARTIFACT_DIR_PATH,
     PROFILING_ARTIFACT_DIST_DIR_PATH,
     PROFILING_ARTIFACT_MISSING_VALUES_DIR_PATH,
     PROFILING_ARTIFACT_STATS_DIR_PATH,
     PROFILING_ARTIFACT_SUMM_DIR_PATH,
-    PROFILING_ARTIFACT_DIR_PATH,
 )
 
 

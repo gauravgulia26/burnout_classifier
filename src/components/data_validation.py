@@ -1,16 +1,17 @@
-from src.utils.decorators import handle_exceptions
-from src.core.logger import get_logger
+from pathlib import Path
+
 from src.configs.paths import (
-    SCHEMA_YAML_DIR_PATH,
     INGESTION_ARTIFACT_DIR_PATH,
+    SCHEMA_YAML_DIR_PATH,
     VALIDATION_ARTIFACT_DIR_PATH,
 )
-from src.validators.schema_validator import validate_schema
-from src.validators import validate_path
-from src.utils.file_utils import load_json_artifact, load_yaml, dump_model_to_json
-from src.entity.configs.data_validation_cfg import DataValidationConfig
+from src.core.logger import get_logger
 from src.entity.artifacts.data_validation_artifact import DataValidationArtifact
-from pathlib import Path
+from src.entity.configs.data_validation_cfg import DataValidationConfig
+from src.utils.decorators import handle_exceptions
+from src.utils.file_utils import dump_model_to_json, load_json_artifact, load_yaml
+from src.validators import validate_path
+from src.validators.schema_validator import validate_schema
 
 
 class DataValidation:

@@ -1,6 +1,7 @@
-from pydantic import BaseModel
 from pathlib import Path
 from typing import List, NamedTuple
+
+from pydantic import BaseModel
 
 
 class DataIngestionArtifact(BaseModel):

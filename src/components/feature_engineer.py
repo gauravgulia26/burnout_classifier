@@ -1,5 +1,5 @@
-from src.features.make_features import FeatureEngineer
 from src.entity.artifacts.feature_engineer_artifact import FeatureEngineerArtifact
+from src.features.make_features import FeatureEngineer
 
 
 class MakeFeatures:

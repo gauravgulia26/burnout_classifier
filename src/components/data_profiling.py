@@ -1,10 +1,10 @@
 import pandas as pd
 
-from src.core.logger import get_logger
 from src.configs.paths import (
     LOG_DIR_PATH,
     VALIDATION_ARTIFACT_DIR_PATH,
 )
+from src.core.logger import get_logger
 from src.entity.artifacts.data_profiling_artifact import (
     DataProfilingArtifact,
 )

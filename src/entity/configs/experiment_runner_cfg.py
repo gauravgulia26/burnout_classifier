@@ -1,9 +1,10 @@
-from pydantic.dataclasses import dataclass
-from pydantic import ConfigDict
 from pathlib import Path
 from typing import Dict
-from sklearn.model_selection import ParameterGrid
+
+from pydantic import ConfigDict
+from pydantic.dataclasses import dataclass
 from rich.traceback import install
+from sklearn.model_selection import ParameterGrid
 
 install()
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))

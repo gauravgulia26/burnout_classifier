@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import dagshub
 import pandas as pd
 
 from src.configs.paths import (
@@ -12,7 +13,6 @@ from src.entity.configs.mlflow_cfg import MLflowConfig
 from src.experiment.runner import ExperimentRunner
 from src.tracking.mlflow_tracker import MLflowTracker
 from src.utils.file_utils import dump_model_to_json, load_json_artifact, load_yaml
-import dagshub
 
 dagshub.init(repo_owner="grvgulia007", repo_name="burnout_classifier", mlflow=True)
 

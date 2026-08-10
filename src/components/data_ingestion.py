@@ -1,14 +1,15 @@
-from src.utils.decorators import handle_exceptions
-from src.core.logger import get_logger
+import pandas as pd
+
 from src.configs.paths import INGESTION_ARTIFACT_DIR_PATH
-from src.managers import DataIngestionConfig
-from src.validators import validate_path
+from src.core.logger import get_logger
 from src.entity.artifacts.data_ingestion_artifact import (
     DataIngestionArtifact,
     DataIngestionMetadataArtifact,
 )
+from src.managers import DataIngestionConfig
+from src.utils.decorators import handle_exceptions
 from src.utils.file_utils import dump_model_to_json
-import pandas as pd
+from src.validators import validate_path
 
 
 class DataIngestion:

@@ -1,5 +1,6 @@
-from pydantic.dataclasses import dataclass
 from pathlib import Path
+
+from pydantic.dataclasses import dataclass
 
 
 @dataclass

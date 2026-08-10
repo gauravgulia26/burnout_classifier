@@ -1,5 +1,5 @@
-import sys
 from functools import wraps
+import sys
 
 from src.core.exception import CustomException
 

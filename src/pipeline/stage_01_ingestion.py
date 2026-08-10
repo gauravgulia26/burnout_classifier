@@ -3,8 +3,8 @@ from src.components.data_ingestion import (
     DataIngestionConfig,
     handle_exceptions,
 )
-from src.utils.file_utils import load_yaml
 from src.configs.paths import COMPONENT_YAML_DIR_PATH
+from src.utils.file_utils import load_yaml
 
 
 @handle_exceptions

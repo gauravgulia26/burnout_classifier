@@ -13,6 +13,7 @@ from src.configs.paths import (
     MODEL_ARTIFACT_DIR_PATH,
     MODEL_PATH,
     TRANSFORMATION_ARTIFACT_DIR_PATH,
+    TUNING_ARTIFACT_DIR_PATH,
 )
 from src.entity.configs.mlflow_cfg import MLflowConfig
 from src.entity.configs.model_trainer_cfg import ModelTrainerConfig
@@ -31,8 +32,12 @@ def main() -> dict:
     """Fit the selected estimator once on all training data and save the bundle."""
     config_path = Path(__file__).parents[2] / "configs" / "experiment_params.yaml"
     config = load_yaml(config_path)
-    selection = load_json_artifact(EXPERIMENT_ARTIFACT_DIR_PATH)
     transformation = load_json_artifact(TRANSFORMATION_ARTIFACT_DIR_PATH)
+
+    if TUNING_ARTIFACT_DIR_PATH.exists():
+        selection = load_json_artifact(TUNING_ARTIFACT_DIR_PATH)
+    else:
+        selection = load_json_artifact(EXPERIMENT_ARTIFACT_DIR_PATH)
 
     model_name = selection["best_model_name"]
     parameters = selection["best_parameters"]

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from rich.console import Console
 from rich.logging import RichHandler
+
 from src.configs.paths import LOG_DIR_PATH
 
 console = Console()

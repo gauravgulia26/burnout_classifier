@@ -1,16 +1,17 @@
+import json
 from pathlib import Path
 from zipfile import ZipFile
+
+from box import Box
+from pydantic import BaseModel
 from rich.progress import (
-    Progress,
     BarColumn,
+    Progress,
     TextColumn,
     TimeRemainingColumn,
     TransferSpeedColumn,
 )
-import json
-from pydantic import BaseModel
 import yaml
-from box import Box
 
 
 def unzip_with_progress(

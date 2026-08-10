@@ -1,7 +1,8 @@
+from pathlib import Path
+
+from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 from sklearn.base import BaseEstimator
-from pathlib import Path
-from pydantic import ConfigDict
 
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
