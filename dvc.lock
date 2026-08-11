@@ -134,12 +134,16 @@ stages:
       md5: e520c4e44cf7844b122873c66e2b490a
       size: 11501
   model_training:
-    cmd: python src/pipeline/stage_06_model_training.py
+    cmd: python src/pipeline/stage_07_model_training.py
     deps:
     - path: artifacts/experiment_artifact/experiment.json
       hash: md5
       md5: d6ebefe2b39c783c33eaf8ec71056724
       size: 69
+    - path: artifacts/model_tuning_artifact/model_tuning.json
+      hash: md5
+      md5: 5307ef85e4c2f063da38b473a1802d04
+      size: 406
     - path: artifacts/transformation_artifact/data_transformation.json
       hash: md5
       md5: d271a52a6037e9aae3eed25e5a54d105
@@ -150,7 +154,7 @@ stages:
       size: 7645
     - path: configs/experiment_params.yaml
       hash: md5
-      md5: 60f9fe13c42f581b378aeb859331a49f
+      md5: 06f8713d8f9d993d226858772cf3b388
       size: 1817
     - path: src/components/model_trainer.py
       hash: md5
@@ -158,16 +162,16 @@ stages:
       size: 1312
     - path: src/experiment/model_factory.py
       hash: md5
-      md5: e03a1ea257a7735613d7b61da7ce8268
-      size: 1076
+      md5: 1cb7e6c4fb3418df8700ae92afbc1489
+      size: 1077
     - path: src/experiment/model_registry.py
       hash: md5
       md5: d8fb7f6aa3ef92e13ab7242fad099844
       size: 747
-    - path: src/pipeline/stage_06_model_training.py
+    - path: src/pipeline/stage_07_model_training.py
       hash: md5
-      md5: 717ac3bc6d8f2d84ad09705cc46169b5
-      size: 3727
+      md5: 29e0a9e2dc2419c3319c60b264455a58
+      size: 3852
     - path: src/tracking/mlflow_tracker.py
       hash: md5
       md5: 9e7acebcbf3d9c611f203dc1ed418ba8
@@ -175,12 +179,12 @@ stages:
     outs:
     - path: artifacts/model_artifact/model_training.json
       hash: md5
-      md5: 693f0e6363db556951628ee0b4ca7e6e
-      size: 1141
+      md5: d977db9e828dcc33ead65959d5349acb
+      size: 1459
     - path: models/burnout_classifier.joblib
       hash: md5
-      md5: dfbb07c0d3f5827596b0088f70dcf0bf
-      size: 168282731
+      md5: b7e21565a84a8c827a2382a469ac11b9
+      size: 310324987
   model_experiment:
     cmd: python src/pipeline/stage_06_experiment.py
     deps:
@@ -217,3 +221,43 @@ stages:
       hash: md5
       md5: d6ebefe2b39c783c33eaf8ec71056724
       size: 69
+  model_tuning:
+    cmd: python src/pipeline/stage_08_model_tuning.py
+    deps:
+    - path: artifacts/experiment_artifact/experiment.json
+      hash: md5
+      md5: d6ebefe2b39c783c33eaf8ec71056724
+      size: 69
+    - path: artifacts/transformation_artifact/data_transformation.json
+      hash: md5
+      md5: d271a52a6037e9aae3eed25e5a54d105
+      size: 515
+    - path: configs/experiment_params.yaml
+      hash: md5
+      md5: 06f8713d8f9d993d226858772cf3b388
+      size: 1817
+    - path: src/components/model_tuner.py
+      hash: md5
+      md5: 6c637a14fc0058a51494f6add6107ca2
+      size: 6309
+    - path: src/experiment/model_factory.py
+      hash: md5
+      md5: 1cb7e6c4fb3418df8700ae92afbc1489
+      size: 1077
+    - path: src/experiment/model_registry.py
+      hash: md5
+      md5: d8fb7f6aa3ef92e13ab7242fad099844
+      size: 747
+    - path: src/pipeline/stage_08_model_tuning.py
+      hash: md5
+      md5: 049988ad6a9d8388f9ca725ca13aa737
+      size: 2622
+    - path: src/tracking/mlflow_tracker.py
+      hash: md5
+      md5: 9e7acebcbf3d9c611f203dc1ed418ba8
+      size: 1374
+    outs:
+    - path: artifacts/model_tuning_artifact/model_tuning.json
+      hash: md5
+      md5: 5307ef85e4c2f063da38b473a1802d04
+      size: 406

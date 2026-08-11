@@ -5,7 +5,6 @@ import pandas as pd
 
 
 class ValidationProfiler:
-
     def __init__(
         self,
         df: pd.DataFrame,
@@ -22,7 +21,6 @@ class ValidationProfiler:
         statistics = {}
 
         for column in numerical_df.columns:
-
             statistics[column] = {
                 "mean": float(numerical_df[column].mean()),
                 "median": float(numerical_df[column].median()),
@@ -40,7 +38,6 @@ class ValidationProfiler:
             "w",
             encoding="utf-8",
         ) as file:
-
             json.dump(
                 statistics,
                 file,
@@ -57,7 +54,6 @@ class ValidationProfiler:
         total_rows = len(self.df)
 
         for column in self.df.columns:
-
             missing_count = int(self.df[column].isna().sum())
 
             report[column] = {
@@ -73,7 +69,6 @@ class ValidationProfiler:
             "w",
             encoding="utf-8",
         ) as file:
-
             json.dump(
                 report,
                 file,
@@ -90,7 +85,6 @@ class ValidationProfiler:
         numerical_df = self.df.select_dtypes(include="number")
 
         for column in numerical_df.columns:
-
             hist, bins = np.histogram(
                 numerical_df[column],
                 bins=10,
@@ -106,7 +100,6 @@ class ValidationProfiler:
             "w",
             encoding="utf-8",
         ) as file:
-
             json.dump(
                 report,
                 file,
@@ -139,7 +132,6 @@ class ValidationProfiler:
             "w",
             encoding="utf-8",
         ) as file:
-
             json.dump(
                 summary,
                 file,

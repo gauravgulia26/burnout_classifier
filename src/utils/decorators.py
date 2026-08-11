@@ -14,7 +14,6 @@ def handle_exceptions(func):
             return func(*args, **kwargs)
 
         except Exception as e:
-
             err = CustomException(
                 error_message=e,
                 error_detail=sys,

@@ -34,8 +34,7 @@ class ModelFactory:
         if model_name not in MODEL_REGISTRY:
             available_models = ", ".join(MODEL_REGISTRY.keys())
             raise ValueError(
-                f"Unsupported model '{model_name}'. "
-                f"Available models: {available_models}"
+                f"Unsupported model '{model_name}'. Available models: {available_models}"
             )
 
         model_class = MODEL_REGISTRY[model_name]

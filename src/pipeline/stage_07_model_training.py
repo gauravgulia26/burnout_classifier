@@ -39,7 +39,7 @@ def main() -> dict:
     else:
         selection = load_json_artifact(EXPERIMENT_ARTIFACT_DIR_PATH)
 
-    model_name = selection["best_model_name"]
+    model_name = selection["model_name"]
     parameters = selection["best_parameters"]
     model = ModelFactory.create(model_name, parameters)
     trainer = ModelTrainer(
@@ -98,9 +98,7 @@ def main() -> dict:
     )
     MODEL_ARTIFACT_DIR_PATH.parent.mkdir(parents=True, exist_ok=True)
     MODEL_ARTIFACT_DIR_PATH.write_text(
-        json.dumps(
-            {**metrics, "model_path": str(MODEL_PATH), "selection": selection}, indent=2
-        ),
+        json.dumps({**metrics, "model_path": str(MODEL_PATH), "selection": selection}, indent=2),
         encoding="utf-8",
     )
     return metrics

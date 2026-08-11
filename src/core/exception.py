@@ -4,7 +4,6 @@ from rich.traceback import install
 
 
 class CustomException(Exception):
-
     def __init__(self, error_message, error_detail: sys):
         install()
         super().__init__(error_message)
@@ -18,8 +17,5 @@ class CustomException(Exception):
     def __str__(self):
 
         return (
-            f"Error occurred in "
-            f"{self.file_name} "
-            f"at line {self.line_number}: "
-            f"{self.error_message}"
+            f"Error occurred in {self.file_name} at line {self.line_number}: {self.error_message}"
         )

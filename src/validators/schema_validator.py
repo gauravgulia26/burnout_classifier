@@ -23,7 +23,6 @@ def validate_schema(
         raise ValueError(f"Missing columns: {missing_columns}")
 
     for column_name, metadata in expected_columns.items():
-
         expected_type = metadata["type"]
 
         series = df[column_name]

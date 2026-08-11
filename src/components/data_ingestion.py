@@ -37,9 +37,7 @@ class DataIngestion:
             num_rows=df.shape[0],
             num_cols=df.shape[1],
             columns=df.columns.tolist(),
-            numerical_features=df.select_dtypes(
-                exclude=["object", "bool"]
-            ).columns.tolist(),
+            numerical_features=df.select_dtypes(exclude=["object", "bool"]).columns.tolist(),
             boolean_features=df.select_dtypes(include="bool").columns.tolist(),
             categorical_features=df.select_dtypes(include="object").columns.tolist(),
         )

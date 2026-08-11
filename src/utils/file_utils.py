@@ -53,7 +53,6 @@ def unzip_with_progress(
             TimeRemainingColumn(),
             TransferSpeedColumn(),
         ) as progress:
-
             task = progress.add_task(
                 "Extracting",
                 total=len(members),
@@ -140,9 +139,7 @@ def ensure_parent_dir(path: Path) -> None:
         If the directory cannot be created.
     """
     if not isinstance(path, Path):
-        raise TypeError(
-            f"'path' must be a pathlib.Path object, got {type(path).__name__}."
-        )
+        raise TypeError(f"'path' must be a pathlib.Path object, got {type(path).__name__}.")
 
     parent = path.parent
 
@@ -155,9 +152,7 @@ def ensure_parent_dir(path: Path) -> None:
 
     except PermissionError as exc:
         print("Permission denied while creating directory: %s", parent)
-        raise RuntimeError(
-            f"Permission denied while creating directory '{parent}'."
-        ) from exc
+        raise RuntimeError(f"Permission denied while creating directory '{parent}'.") from exc
 
     except OSError as exc:
         print("Failed to create directory:", parent)

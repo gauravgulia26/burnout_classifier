@@ -28,9 +28,7 @@ def main() -> dict:
     model_name = selection["best_model_name"]
     model_config = config.models[model_name]
     if not model_config.enabled:
-        raise ValueError(
-            f"Best model '{model_name}' is disabled in experiment_params.yaml."
-        )
+        raise ValueError(f"Best model '{model_name}' is disabled in experiment_params.yaml.")
 
     tracking = config.experiment.tracking
     scoring = {"accuracy": "accuracy", "macro_f1": "f1_macro"}

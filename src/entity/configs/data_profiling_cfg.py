@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 
 class DataProfilingConfig(BaseModel):
-
     component_name: str
 
     statistics_path: Path

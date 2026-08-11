@@ -22,7 +22,6 @@ from src.utils.file_utils import (
 
 
 class DataProfiler:
-
     def __init__(
         self,
         profiling_config: DataProfilingConfig,
@@ -52,9 +51,7 @@ class DataProfiler:
 
         self.logger.info("Data Profiling Started")
 
-        validation_artifact = load_json_artifact(
-            artifact_path=VALIDATION_ARTIFACT_DIR_PATH
-        )
+        validation_artifact = load_json_artifact(artifact_path=VALIDATION_ARTIFACT_DIR_PATH)
 
         df = pd.read_csv(validation_artifact[key])
 

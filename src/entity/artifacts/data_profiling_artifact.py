@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 
 class DataProfilingArtifact(BaseModel):
-
     statistics_path: Path
 
     distributions_path: Path

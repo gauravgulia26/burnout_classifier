@@ -27,9 +27,7 @@ class DataValidation:
 
     @handle_exceptions
     def __read_ingestion_json(self, schema_key: str = "raw_data_path") -> Path:
-        return Path(
-            load_json_artifact(artifact_path=INGESTION_ARTIFACT_DIR_PATH)[schema_key]
-        )
+        return Path(load_json_artifact(artifact_path=INGESTION_ARTIFACT_DIR_PATH)[schema_key])
 
     @handle_exceptions
     def run(self):
@@ -48,7 +46,5 @@ class DataValidation:
             ),
             output_path=VALIDATION_ARTIFACT_DIR_PATH,
         )
-        self.logger.info(
-            f"Validation Artifact Saved to: {VALIDATION_ARTIFACT_DIR_PATH}"
-        )
+        self.logger.info(f"Validation Artifact Saved to: {VALIDATION_ARTIFACT_DIR_PATH}")
         self.logger.info("Data Validation Completed Successfully")

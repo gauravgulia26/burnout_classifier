@@ -16,6 +16,7 @@ RAW_DATA_NAME = "raw_data.csv"
 
 # Artifacts Configs
 ARTIFACT_DIR = "artifacts"
+MLFLOW_ARTIFACT_DIR = "mlflow_artifacts"
 
 INGESTION_ARTIFACT_DIR = "ingestion_artifact"
 INGESTION_ARTIFACT = "data_ingestion.json"
@@ -40,6 +41,7 @@ YAML_DIR_NAME = "configs"
 SCHEMA_YAML = "schema.yaml"
 COMPONENT_YAML = "components_params.yaml"
 TRANSFORMATION_YAML = "transformation_schema.yaml"
+EXPERIMENT_YAML = "experiment_params.yaml"
 
 # transformation config
 X_TRAIN_NAME = "x_train.parquet"

@@ -1,6 +1,6 @@
+from multiprocessing import Manager
 import threading
 import time
-from multiprocessing import Manager
 from typing import Tuple
 
 import pandas as pd
