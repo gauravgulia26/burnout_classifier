@@ -196,3 +196,5 @@ artifacts/
 models/*.joblib
 .vscode/
 notebooks/
+
+data
