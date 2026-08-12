@@ -10,10 +10,11 @@ from src.pipeline.stage_05_data_transformation import main as transform
 from src.pipeline.stage_06_experiment import main as experiment
 from src.pipeline.stage_07_model_training import main as train
 from src.pipeline.stage_08_model_tuning import main as tune
+from src.pipeline.stage_09_model_registry import main as register
 
 
 def main() -> dict:
-    """Run every pipeline stage in dependency order and return model metrics."""
+    """Run every pipeline stage in dependency order and return registry info."""
     ingest()
     validate()
     profile()
@@ -21,7 +22,8 @@ def main() -> dict:
     transform()
     experiment()
     tune()
-    return train()
+    train()
+    return register()
 
 
 if __name__ == "__main__":

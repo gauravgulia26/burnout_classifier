@@ -90,3 +90,21 @@ stages:
     outs:
       - artifacts/model_artifact/model_training.json
       - models/burnout_classifier.joblib
+  model_registry:
+    cmd: python src/pipeline/stage_09_model_registry.py
+    deps:
+      - src/pipeline/stage_09_model_registry.py
+      - src/components/model_registry.py
+      - src/tracking/mlflow_tracker.py
+      - src/entity/configs/model_registry_cfg.py
+      - src/entity/artifacts/model_registry_artifact.py
+      - artifacts/feature_engineer_artifact/feature_engineer.json
+      - artifacts/model_tuning_artifact/model_tuning.json
+      - artifacts/model_artifact/model_training.json
+      - artifacts/transformation_artifact/data_transformation.json
+      - models/burnout_classifier.joblib
+      - configs/experiment_params.yaml
+      - configs/registry_params.yaml
+      - configs/schema.yaml
+    outs:
+      - artifacts/model_registry_artifact/model_registry.json

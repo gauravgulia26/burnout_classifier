@@ -20,12 +20,11 @@ from src.entity.configs.model_trainer_cfg import ModelTrainerConfig
 from src.experiment.model_factory import ModelFactory
 from src.tracking.mlflow_tracker import MLflowTracker
 from src.utils.file_utils import load_json_artifact, load_yaml
+from src.utils.service_utils import init_dagshub
 
 LABELS = {0: "Low", 1: "Medium", 2: "High"}
 
-import dagshub
-
-dagshub.init(repo_owner="grvgulia007", repo_name="burnout_classifier", mlflow=True)
+init_dagshub()
 
 
 def main() -> dict:
@@ -98,7 +97,9 @@ def main() -> dict:
     )
     MODEL_ARTIFACT_DIR_PATH.parent.mkdir(parents=True, exist_ok=True)
     MODEL_ARTIFACT_DIR_PATH.write_text(
-        json.dumps({**metrics, "model_path": str(MODEL_PATH), "selection": selection}, indent=2),
+        json.dumps(
+            {**metrics, "model_path": str(MODEL_PATH), "selection": selection}, indent=2
+        ),
         encoding="utf-8",
     )
     return metrics

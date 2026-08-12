@@ -1,0 +1,22 @@
+registry:
+  # MLflow server that will receive the registered model. Leave blank to reuse
+  # `experiment.tracking.tracking_uri` from experiment_params.yaml, or override
+  # at runtime with:  python src/pipeline/stage_09_model_registry.py --tracking-uri <uri>
+  tracking_uri: https://dagshub.com/grvgulia007/burnout_classifier.mlflow
+
+  # MLflow experiment in which the registration run is recorded.
+  experiment_name: model_selection_burnout_prediction
+
+  # Name under which the model is registered in the MLflow Model Registry.
+  registered_model_name: burnout_classifier
+
+  # Optional MLflow aliases for the registered model version (e.g. "champion").
+  alias: champion
+
+  # Number of rows sampled from the held-out set for signature inference,
+  # the model input example, and the logged inference dataset.
+  input_sample_size: 5
+
+  tags:
+    framework: sklearn
+    task: multi_class_classification

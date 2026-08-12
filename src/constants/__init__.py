@@ -35,6 +35,9 @@ TRANSFORMATION_ARTIFACT = "data_transformation.json"
 
 TUNING_ARTIFACT_DIR = "model_tuning_artifact"
 TUNING_ARTIFACT = "model_tuning.json"
+
+MODEL_REGISTRY_ARTIFACT_DIR = "model_registry_artifact"
+MODEL_REGISTRY_ARTIFACT = "model_registry.json"
 LOG_DIR = "logs"
 
 YAML_DIR_NAME = "configs"
@@ -42,6 +45,7 @@ SCHEMA_YAML = "schema.yaml"
 COMPONENT_YAML = "components_params.yaml"
 TRANSFORMATION_YAML = "transformation_schema.yaml"
 EXPERIMENT_YAML = "experiment_params.yaml"
+REGISTRY_YAML = "registry_params.yaml"
 
 # transformation config
 X_TRAIN_NAME = "x_train.parquet"

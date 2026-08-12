@@ -31,6 +31,14 @@ mlflow server --host 127.0.0.1 --port 5000
 
 The experiment stage runs each enabled model once with its estimator default parameters using cross-validation, logs the defaults and metrics to MLflow, and writes only the winning selection to `artifacts/experiment_artifact/experiment.json`. Final training consumes that artifact, trains exactly once, and logs the final model to MLflow.
 
+The model registry stage (`src/pipeline/stage_09_model_registry.py`) loads the preprocessor pipeline produced by the data-transformation component, appends the tuned best model as its final classifier step, and registers that full inference pipeline into the MLflow Model Registry along with its signature, a sample input dataset, and the preprocessor artifacts. Pass the MLflow server URI explicitly, or let it default to `configs/registry_params.yaml`:
+
+```bash
+python src/pipeline/stage_09_model_registry.py --tracking-uri http://127.0.0.1:5000
+```
+
+The registry hand-off is written to `artifacts/model_registry_artifact/model_registry.json` and contains the registered model URI (`models:/<name>/<version>`), run id, model/preprocessor/sample artifact URIs, and the test metrics — everything an inference service needs to load the model (`mlflow.pyfunc.load_model("models:/<name>/<version>")`).
+
 To predict from a CSV containing the raw input columns (the target column is optional):
 
 ```bash
