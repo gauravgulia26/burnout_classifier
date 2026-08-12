@@ -4,6 +4,7 @@ from types import SimpleNamespace
 import joblib
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, f1_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -73,7 +74,14 @@ def make_config(tmp_path):
     joblib.dump(preprocessor, preprocessor_path)
 
     model = LogisticRegression(max_iter=100, random_state=42)
-    model.fit(scaler.transform(sample), with_target["Burnout_Risk_Level"])
+    target = with_target["Burnout_Risk_Level"]
+    model.fit(scaler.transform(sample), target)
+
+    x_test = pd.DataFrame({"feature_a": [0.4, 0.7], "feature_b": [1, 2]})
+    y_test = pd.Series([1, 0], name="Burnout_Risk_Level")
+    x_test.to_parquet(tmp_path / "x_test.parquet", index=False)
+    y_test.to_frame().to_parquet(tmp_path / "y_test.parquet", index=False)
+
     bundle_path = tmp_path / "bundle.joblib"
     joblib.dump(
         {"model": model, "preprocessor": preprocessor, "label_map": {0: "Low"}},
@@ -88,19 +96,7 @@ def make_config(tmp_path):
                 "best_parameters": {"C": 0.5},
                 "best_score": 0.52,
                 "tuning_time": 10.0,
-            }
-        ),
-        encoding="utf-8",
-    )
-
-    training_path = tmp_path / "model_training.json"
-    training_path.write_text(
-        json.dumps(
-            {
-                "model_name": "logistic_regression",
-                "accuracy": 0.51,
-                "macro_f1": 0.53,
-                "classification_report": {},
+                "model_path": str(bundle_path),
             }
         ),
         encoding="utf-8",
@@ -114,27 +110,42 @@ def make_config(tmp_path):
 
     transformation_path = tmp_path / "data_transformation.json"
     transformation_path.write_text(
-        json.dumps({"pipeline_preprocessor_path": str(preprocessor_path)}),
+        json.dumps(
+            {
+                "x_test_path": str(tmp_path / "x_test.parquet"),
+                "y_test_path": str(tmp_path / "y_test.parquet"),
+                "pipeline_preprocessor_path": str(preprocessor_path),
+            }
+        ),
         encoding="utf-8",
     )
 
-    return ModelRegistryConfig(
-        tracking_uri="http://mlflow-test:5000",
-        experiment_name="test_experiment",
-        registered_model_name="burnout_classifier",
-        model_path=bundle_path,
-        tuning_artifact_path=tuning_path,
-        training_artifact_path=training_path,
-        transformation_artifact_path=transformation_path,
-        feature_engineer_artifact_path=feature_engineer_path,
-        alias="champion",
-        tags={"framework": "sklearn"},
+    predictions = model.predict(x_test)
+    expected_metrics = {
+        "accuracy": float(accuracy_score(y_test, predictions)),
+        "macro_f1": float(f1_score(y_test, predictions, average="macro")),
+    }
+
+    return (
+        ModelRegistryConfig(
+            tracking_uri="http://mlflow-test:5000",
+            experiment_name="test_experiment",
+            registered_model_name="burnout_classifier",
+            model_path=bundle_path,
+            tuning_artifact_path=tuning_path,
+            transformation_artifact_path=transformation_path,
+            feature_engineer_artifact_path=feature_engineer_path,
+            alias="champion",
+            tags={"framework": "sklearn"},
+        ),
+        expected_metrics,
     )
 
 
 def test_registrar_registers_preprocessor_pipeline_with_signature(tmp_path):
     tracker = FakeTracker()
-    registrar = ModelRegistrar(make_config(tmp_path), tracker=tracker)
+    config, expected_metrics = make_config(tmp_path)
+    registrar = ModelRegistrar(config, tracker=tracker)
 
     artifact = registrar.run()
 
@@ -150,7 +161,7 @@ def test_registrar_registers_preprocessor_pipeline_with_signature(tmp_path):
     assert artifact.run_id == "run-123"
     assert artifact.alias == "champion"
     assert artifact.best_score == 0.52
-    assert artifact.test_metrics == {"accuracy": 0.51, "macro_f1": 0.53}
+    assert artifact.test_metrics == expected_metrics
     assert artifact.model_uri == "runs:/run-123/model"
 
     assert tracker.registered == ("runs:/run-123/model", "burnout_classifier")
@@ -163,3 +174,4 @@ def test_registrar_registers_preprocessor_pipeline_with_signature(tmp_path):
     assert tracker.parameter_logs[0]["model_name"] == "logistic_regression"
     assert tracker.parameter_logs[0]["pipeline_steps"] == "preprocessor,classifier"
     assert tracker.metric_logs[0]["best_tuning_score"] == 0.52
+    assert tracker.metric_logs[0]["accuracy"] == expected_metrics["accuracy"]

@@ -14,7 +14,6 @@ class ModelRegistryConfig:
     registered_model_name: str
     model_path: Path
     tuning_artifact_path: Path
-    training_artifact_path: Path
     transformation_artifact_path: Path
     feature_engineer_artifact_path: Path
     input_sample_size: int = 5

@@ -97,9 +97,7 @@ def main() -> dict:
     )
     MODEL_ARTIFACT_DIR_PATH.parent.mkdir(parents=True, exist_ok=True)
     MODEL_ARTIFACT_DIR_PATH.write_text(
-        json.dumps(
-            {**metrics, "model_path": str(MODEL_PATH), "selection": selection}, indent=2
-        ),
+        json.dumps({**metrics, "model_path": str(MODEL_PATH), "selection": selection}, indent=2),
         encoding="utf-8",
     )
     return metrics

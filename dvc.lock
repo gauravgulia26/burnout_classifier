@@ -194,8 +194,8 @@ stages:
       size: 515
     - path: configs/experiment_params.yaml
       hash: md5
-      md5: 06f8713d8f9d993d226858772cf3b388
-      size: 1817
+      md5: cfb38329ba7ffc6819e7b7e68430e7a6
+      size: 1737
     - path: src/experiment/model_factory.py
       hash: md5
       md5: f6f29a9a2f029a8e49fac01001aa5ddb

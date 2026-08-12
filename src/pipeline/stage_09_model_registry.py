@@ -11,7 +11,6 @@ from src.components.model_registry import ModelRegistrar
 from src.configs.paths import (
     EXPERIMENT_YAML_DIR_PATH,
     FEATURE_ENGINEER_ARTIFACT_DIR_PATH,
-    MODEL_ARTIFACT_DIR_PATH,
     MODEL_PATH,
     MODEL_REGISTRY_ARTIFACT_DIR_PATH,
     REGISTRY_YAML_DIR_PATH,
@@ -40,7 +39,6 @@ def main(tracking_uri: str | None = None) -> dict:
             registered_model_name=registry_config.registered_model_name,
             model_path=MODEL_PATH,
             tuning_artifact_path=TUNING_ARTIFACT_DIR_PATH,
-            training_artifact_path=MODEL_ARTIFACT_DIR_PATH,
             transformation_artifact_path=TRANSFORMATION_ARTIFACT_DIR_PATH,
             feature_engineer_artifact_path=FEATURE_ENGINEER_ARTIFACT_DIR_PATH,
             target_variable=schema_yaml.target_column,

@@ -1,13 +1,22 @@
-"""Fine-tune the experiment-selected best model with GridSearchCV."""
+"""Fine-tune the experiment-selected best model and persist the tuned bundle.
+
+The tuning stage trains the winning model directly (GridSearchCV refits the
+best candidate on the full training split), so no separate training stage is
+needed. The tuned estimator is saved together with the transformation
+preprocessor as the inference-ready bundle consumed by prediction and the
+model registry.
+"""
 
 import json
 from pathlib import Path
 
 import dagshub
+import joblib
 
 from src.components.model_tuner import ModelTuner
 from src.configs.paths import (
     EXPERIMENT_ARTIFACT_DIR_PATH,
+    MODEL_PATH,
     TRANSFORMATION_ARTIFACT_DIR_PATH,
     TUNING_ARTIFACT_DIR_PATH,
 )
@@ -15,6 +24,8 @@ from src.entity.configs.mlflow_cfg import MLflowConfig
 from src.entity.configs.model_tuning_cfg import ModelTuningConfig
 from src.tracking.mlflow_tracker import MLflowTracker
 from src.utils.file_utils import dump_model_to_json, load_json_artifact, load_yaml
+
+LABELS = {0: "Low", 1: "Medium", 2: "High"}
 
 dagshub.init(repo_owner="grvgulia007", repo_name="burnout_classifier", mlflow=True)
 
@@ -64,6 +75,20 @@ def main() -> dict:
         )
         if tracking.log_model and tuner.best_estimator is not None:
             tracker.log_model(tuner.best_estimator)
+
+    transformation = load_json_artifact(TRANSFORMATION_ARTIFACT_DIR_PATH)
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    preprocessor = joblib.load(transformation["pipeline_preprocessor_path"])
+    preprocessor.set_output(transform="pandas")
+    joblib.dump(
+        {
+            "model": tuner.best_estimator,
+            "preprocessor": preprocessor,
+            "label_map": LABELS,
+        },
+        MODEL_PATH,
+    )
+    tuning = tuning.model_copy(update={"model_path": str(MODEL_PATH)})
 
     dump_model_to_json(tuning, TUNING_ARTIFACT_DIR_PATH)
     return tuning.model_dump(mode="json")

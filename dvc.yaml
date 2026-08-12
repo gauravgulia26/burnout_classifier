@@ -70,25 +70,11 @@ stages:
       - src/experiment/model_registry.py
       - src/tracking/mlflow_tracker.py
       - artifacts/transformation_artifact/data_transformation.json
-      - artifacts/experiment_artifact/experiment.json
-      - configs/experiment_params.yaml
-    outs:
-      - artifacts/model_tuning_artifact/model_tuning.json
-  model_training:
-    cmd: python src/pipeline/stage_07_model_training.py
-    deps:
-      - src/pipeline/stage_07_model_training.py
-      - src/components/model_trainer.py
-      - src/experiment/model_factory.py
-      - src/experiment/model_registry.py
-      - src/tracking/mlflow_tracker.py
-      - artifacts/transformation_artifact/data_transformation.json
       - artifacts/transformation_artifact/preprocessor.joblib
       - artifacts/experiment_artifact/experiment.json
-      - artifacts/model_tuning_artifact/model_tuning.json
       - configs/experiment_params.yaml
     outs:
-      - artifacts/model_artifact/model_training.json
+      - artifacts/model_tuning_artifact/model_tuning.json
       - models/burnout_classifier.joblib
   model_registry:
     cmd: python src/pipeline/stage_09_model_registry.py
@@ -100,7 +86,6 @@ stages:
       - src/entity/artifacts/model_registry_artifact.py
       - artifacts/feature_engineer_artifact/feature_engineer.json
       - artifacts/model_tuning_artifact/model_tuning.json
-      - artifacts/model_artifact/model_training.json
       - artifacts/transformation_artifact/data_transformation.json
       - models/burnout_classifier.joblib
       - configs/experiment_params.yaml

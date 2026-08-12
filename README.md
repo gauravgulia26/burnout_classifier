@@ -21,7 +21,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-This runs ingestion, schema validation, profiling, feature engineering, transformation, training, and held-out evaluation. It writes the inference-ready bundle to `models/burnout_classifier.joblib` and evaluation metrics to `artifacts/model_artifact/model_training.json`.
+This runs ingestion, schema validation, profiling, feature engineering, transformation, model selection, tuning, and registration. The tuning stage grid-searches the experiment-winning model and directly trains the refitted best estimator on the full training split, writing the inference-ready bundle to `models/burnout_classifier.joblib`.
 
 Before running model selection, start an MLflow server and set its URL in `configs/experiment_params.yaml` under `experiment.tracking.tracking_uri`:
 
@@ -29,7 +29,7 @@ Before running model selection, start an MLflow server and set its URL in `confi
 mlflow server --host 127.0.0.1 --port 5000
 ```
 
-The experiment stage runs each enabled model once with its estimator default parameters using cross-validation, logs the defaults and metrics to MLflow, and writes only the winning selection to `artifacts/experiment_artifact/experiment.json`. Final training consumes that artifact, trains exactly once, and logs the final model to MLflow.
+The experiment stage runs each enabled model once with its estimator default parameters using cross-validation, logs the defaults and metrics to MLflow, and writes only the winning selection to `artifacts/experiment_artifact/experiment.json`. The tuning stage consumes that selection, grid-searches the winning model, and saves the refitted best estimator (with the transformation preprocessor) as the inference-ready bundle — so no separate training stage is needed.
 
 The model registry stage (`src/pipeline/stage_09_model_registry.py`) loads the preprocessor pipeline produced by the data-transformation component, appends the tuned best model as its final classifier step, and registers that full inference pipeline into the MLflow Model Registry along with its signature, a sample input dataset, and the preprocessor artifacts. Pass the MLflow server URI explicitly, or let it default to `configs/registry_params.yaml`:
 
