@@ -197,4 +197,4 @@ models/*.joblib
 .vscode/
 notebooks/
 
-data
+data/

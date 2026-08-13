@@ -26,9 +26,9 @@ dvc
 mlflow>=2,<3
 config-box
 python-box
-xgboost-cpu
-catboost
-psycopg2
+# xgboost-cpu
+# catboost
+# psycopg2
 dagshub
 fastapi[standard]
 -e .
