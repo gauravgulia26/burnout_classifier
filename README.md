@@ -85,6 +85,10 @@ pip install -r requirements.txt
 dvc repro model_registry
 ```
 
+**View the pipeline and experiments online:**
+- 🔄 **[DVC Pipeline](https://dagshub.com/grvgulia007/burnout_classifier)** — Track data flow, dependencies, and outputs across all stages
+- 📈 **[MLflow Experiments](https://dagshub.com/grvgulia007/burnout_classifier.mlflow/)** — View all training runs, hyperparameters, metrics, and the registered `champion` model
+
 ---
 
 ## 🌐 Application services
@@ -169,6 +173,18 @@ burnout_classifier/
 
 ## ▶️ How to use and deploy
 
+### 📊 Quick Links to Live Resources
+
+| Resource | Link |
+| --- | --- |
+| 🚀 **Streamlit Application** | [**Launch Burnout Compass**](https://burnout-compass.streamlit.app/) |
+| 📡 **FastAPI Backend** | [**API Docs**](https://burnout-classifier.fastapicloud.dev/docs) · [**Health Check**](https://burnout-classifier.fastapicloud.dev/api/v1/health) |
+| 🔄 **DVC Pipeline** | [**View on DagShub**](https://dagshub.com/grvgulia007/burnout_classifier) |
+| 📈 **MLflow Experiments** | [**View Runs & Metrics**](https://dagshub.com/grvgulia007/burnout_classifier.mlflow/) |
+| 🐳 **Docker Image** | [**Docker Hub**](https://hub.docker.com/r/gouravgulia4348/burnout_classifier) |
+
+---
+
 ### 1. 🐳 Docker Pushed Image
 
 The CI/CD workflow publishes `latest` and commit-SHA tags to Docker Hub:
@@ -189,9 +205,9 @@ Open [http://localhost:8501](http://localhost:8501). The image starts FastAPI in
 
 ### 2. ☁️ Streamlit Cloud
 
-**🎯 Live Application:** [**🚀 Launch Burnout Compass**](https://burnout-compass.streamlit.app/)
+The FastAPI backend is deployed separately and configured via the Streamlit Cloud secrets. The live application is already deployed and ready to use via the link in the [**Quick Links**](#-quick-links-to-live-resources) section above.
 
-The FastAPI backend is deployed separately and configured via the Streamlit Cloud secrets. To deploy your own instance:
+To deploy your own Streamlit instance:
 
 1. Deploy the FastAPI backend as a public HTTPS service (see [**3. FastAPI Deployed Endpoint**](#3-🚀-fastapi-deployed-endpoint) below).
 2. In Streamlit Community Cloud, select this repository and set the main file to `src/cloud/main.py`.
@@ -209,10 +225,7 @@ You may also provide only the backend host; the frontend client automatically ap
 
 #### Option A: FastAPI Cloud (Production)
 
-**🎯 Live API:** [**burnout-classifier.fastapicloud.dev**](https://burnout-classifier.fastapicloud.dev/api/v1/health)
-
-- **API Documentation:** [API Docs](https://burnout-classifier.fastapicloud.dev/docs)
-- **Health Check:** [Health Endpoint](https://burnout-classifier.fastapicloud.dev/api/v1/health)
+**🎯 Live API:** Accessible via links in the [**Quick Links**](#-quick-links-to-live-resources) section above.
 
 This repository declares the FastAPI Cloud entrypoint in `pyproject.toml`:
 
