@@ -14,6 +14,10 @@ class BackendAPIClient:
 
     def __init__(self, base_url: str, timeout_seconds: float = 20.0) -> None:
         normalized_url = base_url.rstrip("/")
+        for suffix in ("/api/v1/health", "/api/v1/predict", "/health", "/predict"):
+            if normalized_url.endswith(suffix):
+                normalized_url = normalized_url[: -len(suffix)]
+                break
         self.base_url = (
             normalized_url
             if normalized_url.endswith("/api/v1")

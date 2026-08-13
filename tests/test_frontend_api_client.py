@@ -51,6 +51,17 @@ def test_client_adds_api_prefix_when_given_only_a_backend_host():
     assert session.calls[0][1] == "https://api.example/api/v1/health"
 
 
+def test_client_normalizes_a_health_or_prediction_url_to_api_base():
+    for configured_url in (
+        "https://api.example/health",
+        "https://api.example/api/v1/health",
+        "https://api.example/predict",
+        "https://api.example/api/v1/predict",
+    ):
+        client = BackendAPIClient(configured_url)
+        assert client.base_url == "https://api.example/api/v1"
+
+
 def test_client_returns_a_user_safe_error_for_connection_failures():
     client = BackendAPIClient("http://api.example")
 
