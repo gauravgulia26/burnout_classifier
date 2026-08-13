@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from threading import Lock
-from typing import Any
+from typing import Any, ClassVar
 
 import mlflow
 import pandas as pd
@@ -17,7 +17,7 @@ class ModelNotLoadedError(RuntimeError):
 class MLflowModelService:
     """Loads one registered MLflow model and uses it for thread-safe inference."""
 
-    _LABELS = {0: "Low", 1: "Medium", 2: "High"}
+    _LABELS: ClassVar[dict[int, str]] = {0: "Low", 1: "Medium", 2: "High"}
 
     def __init__(self, tracking_uri: str, model_uri: str) -> None:
         self.tracking_uri = tracking_uri

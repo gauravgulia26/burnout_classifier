@@ -9,7 +9,7 @@ pandas
 pip
 pytest
 python-dotenv
-ruff
+ruff==0.16.2
 scikit-learn
 tqdm
 typer
