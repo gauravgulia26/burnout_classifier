@@ -121,6 +121,8 @@ The frontend in `src/frontend` provides a focused assessment form and a polished
 - Never caches prediction results.
 - Configured with `BACKEND_API_URL` (default: `http://127.0.0.1:8000/api/v1`).
 
+For Streamlit Community Cloud, use `src/cloud/main.py` as the app file. It reads `BACKEND_API_URL` from Streamlit Secrets and starts the same frontend without trying to launch FastAPI inside the Cloud process. Deploy FastAPI separately (for example on a container platform), then point the Cloud app to its public `/api/v1` URL.
+
 ### Backend — FastAPI
 
 The backend in `src/backend` is a separate, modular inference layer.
@@ -249,6 +251,47 @@ The original complete training command remains available as:
 ```bash
 python main.py train
 ```
+
+### Streamlit Community Cloud
+
+1. Deploy the FastAPI backend as a public HTTPS service.
+2. In Streamlit Community Cloud, select this repository and set the main file to `src/cloud/main.py`.
+3. Add this secret under **App settings → Secrets**:
+
+```toml
+BACKEND_API_URL = "https://your-backend-host.example.com/api/v1"
+```
+
+The Cloud app shows a configuration message when this secret is missing and shows a waiting screen until the backend health endpoint confirms that the MLflow model is ready. Keep MLflow credentials and model settings on the backend deployment; do not place them in frontend secrets unless the frontend directly needs them.
+
+### FastAPI Cloud backend
+
+This repository declares the FastAPI Cloud entrypoint in `pyproject.toml`:
+
+```toml
+[tool.fastapi]
+entrypoint = "src.backend.main:app"
+```
+
+From the project root, install the standard FastAPI CLI and deploy:
+
+```bash
+pip install "fastapi[standard]"
+fastapi login
+fastapi dev                  # verify locally first
+fastapi deploy               # creates or updates the FastAPI Cloud app
+```
+
+FastAPI Cloud will provide a public URL such as `https://your-app.fastapicloud.dev`; the API documentation is available at `/docs` and the readiness endpoint at `/api/v1/health`. Configure the model service variables in FastAPI Cloud before or after deployment:
+
+```bash
+fastapi cloud env set MLFLOW_TRACKING_URI "https://dagshub.com/grvgulia007/burnout_classifier.mlflow"
+fastapi cloud env set MLFLOW_MODEL_URI "models:/burnout_classifier@champion"
+fastapi cloud env set --secret MLFLOW_TRACKING_USERNAME "your-mlflow-username"
+fastapi cloud env set --secret MLFLOW_TRACKING_PASSWORD "your-mlflow-password"
+```
+
+If Dagshub authentication is token-based, set the corresponding MLflow/Dagshub token variable required by your account instead of storing credentials in source control. After setting variables, redeploy if the CLI does not automatically redeploy them. Finally, copy the backend URL with `/api/v1` appended into the Streamlit Cloud `BACKEND_API_URL` secret.
 
 ---
 
