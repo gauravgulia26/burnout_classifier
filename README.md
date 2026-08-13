@@ -167,9 +167,110 @@ burnout_classifier/
 
 ---
 
-## 🐳 Run with Docker
+## ▶️ How to use and deploy
 
-### Option 1: Build locally
+### 1. 🐳 Docker Pushed Image
+
+The CI/CD workflow publishes `latest` and commit-SHA tags to Docker Hub:
+
+```bash
+docker pull gouravgulia4348/burnout_classifier:latest
+docker run --rm -p 8501:8501 \
+  -e MLFLOW_TRACKING_URI="https://your-mlflow-server" \
+  -e MLFLOW_MODEL_URI="models:/burnout_classifier@champion" \
+  gouravgulia4348/burnout_classifier:latest
+```
+
+Open [http://localhost:8501](http://localhost:8501). The image starts FastAPI internally, waits for the registered model, and then starts Streamlit.
+
+**View the image on Docker Hub:** [`gouravgulia4348/burnout_classifier`](https://hub.docker.com/r/gouravgulia4348/burnout_classifier)
+
+---
+
+### 2. ☁️ Streamlit Cloud
+
+**🎯 Live Application:** [**🚀 Launch Burnout Compass**](https://burnout-compass.streamlit.app/)
+
+The FastAPI backend is deployed separately and configured via the Streamlit Cloud secrets. To deploy your own instance:
+
+1. Deploy the FastAPI backend as a public HTTPS service (see [**3. FastAPI Deployed Endpoint**](#3-🚀-fastapi-deployed-endpoint) below).
+2. In Streamlit Community Cloud, select this repository and set the main file to `src/cloud/main.py`.
+3. Add this secret under **App settings → Secrets**:
+
+```toml
+BACKEND_API_URL = "https://burnout-classifier.fastapicloud.dev/api/v1"
+```
+
+You may also provide only the backend host; the frontend client automatically appends `/api/v1`. The Cloud app shows a configuration message when this secret is missing and shows a waiting screen until the backend health endpoint confirms that the MLflow model is ready. Keep MLflow credentials and model settings on the backend deployment; do not place them in frontend secrets unless the frontend directly needs them.
+
+---
+
+### 3. 🚀 FastAPI Deployed Endpoint
+
+#### Option A: FastAPI Cloud (Production)
+
+**🎯 Live API:** [**burnout-classifier.fastapicloud.dev**](https://burnout-classifier.fastapicloud.dev/api/v1/health)
+
+- **API Documentation:** [API Docs](https://burnout-classifier.fastapicloud.dev/docs)
+- **Health Check:** [Health Endpoint](https://burnout-classifier.fastapicloud.dev/api/v1/health)
+
+This repository declares the FastAPI Cloud entrypoint in `pyproject.toml`:
+
+```toml
+[tool.fastapi]
+entrypoint = "src.backend.main:app"
+```
+
+To deploy your own FastAPI instance:
+
+```bash
+pip install "fastapi[standard]"
+fastapi login
+fastapi dev                  # verify locally first
+fastapi deploy               # creates or updates the FastAPI Cloud app
+```
+
+Then configure the model service variables in FastAPI Cloud:
+
+```bash
+fastapi cloud env set MLFLOW_TRACKING_URI "https://dagshub.com/grvgulia007/burnout_classifier.mlflow"
+fastapi cloud env set MLFLOW_MODEL_URI "models:/burnout_classifier@champion"
+fastapi cloud env set --secret MLFLOW_TRACKING_USERNAME "your-mlflow-username"
+fastapi cloud env set --secret MLFLOW_TRACKING_PASSWORD "your-mlflow-password"
+```
+
+#### Option B: Custom container platform
+
+Deploy the Docker image to your preferred container platform (AWS ECS, Google Cloud Run, Azure Container Instances, etc.) and expose the FastAPI backend publicly. Point Streamlit Cloud to the public backend URL via the `BACKEND_API_URL` secret.
+
+---
+
+### 4. 💻 Local Install
+
+#### Start the complete application
+
+```bash
+pip install -r requirements.txt
+
+# Start both FastAPI and Streamlit together
+python main.py serve
+```
+
+Open [http://localhost:8501](http://localhost:8501). The application starts FastAPI internally, waits for the registered model, and then starts Streamlit.
+
+#### Run services separately
+
+```bash
+# Terminal 1: Run only the API
+uvicorn src.backend.main:app --host 0.0.0.0 --port 8000
+
+# Terminal 2: Run only the UI (API must already be available)
+streamlit run src/frontend/app.py
+```
+
+#### Build and run Docker locally
+
+**Option 1: Build locally**
 
 ```bash
 docker build -t burnout-classifier .
@@ -180,9 +281,9 @@ docker run --rm -p 8501:8501 \
   burnout-classifier
 ```
 
-Open [http://localhost:8501](http://localhost:8501). The page shows a waiting state until the model is available.
+Open [http://localhost:8501](http://localhost:8501).
 
-### Option 2: Docker Compose
+**Option 2: Docker Compose**
 
 ```bash
 export MLFLOW_TRACKING_URI="https://your-mlflow-server"
@@ -190,86 +291,20 @@ export MLFLOW_MODEL_URI="models:/burnout_classifier@champion"
 docker compose up --build
 ```
 
-### Option 3: Pull the published image
+Open [http://localhost:8501](http://localhost:8501).
+
+#### Development commands
 
 ```bash
-docker pull <dockerhub-username>/burnout-classifier:latest
-
-docker run --rm -p 8501:8501 \
-  -e MLFLOW_TRACKING_URI="https://your-mlflow-server" \
-  -e MLFLOW_MODEL_URI="models:/burnout_classifier@champion" \
-  <dockerhub-username>/burnout-classifier:latest
-```
-
-If the MLflow server is protected, also provide its authentication variables such as `MLFLOW_TRACKING_USERNAME` and `MLFLOW_TRACKING_PASSWORD`.
-
----
-
-## 💻 Local development
-
-```bash
-pip install -r requirements.txt
-
-# Start the complete application (FastAPI + Streamlit)
-python main.py serve
-
-# Run only the API
-uvicorn src.backend.main:app --host 0.0.0.0 --port 8000
-
-# Run only the UI (API must already be available)
-streamlit run src/frontend/app.py
-
-# Run tests and linting
+# Run tests
 python -m pytest -q
+
+# Lint code
 ruff check main.py src/backend src/frontend tests
-```
 
-The original complete training command remains available as:
-
-```bash
+# Run the training pipeline
 python main.py train
 ```
-
-### Streamlit Community Cloud
-
-1. Deploy the FastAPI backend as a public HTTPS service.
-2. In Streamlit Community Cloud, select this repository and set the main file to `src/cloud/main.py`.
-3. Add this secret under **App settings → Secrets**:
-
-```toml
-BACKEND_API_URL = "https://your-backend-host.example.com/api/v1"
-```
-
-You may also provide only the backend host (`https://your-backend-host.example.com`); the frontend client automatically appends `/api/v1`. The Cloud app shows a configuration message when this secret is missing and shows a waiting screen until the backend health endpoint confirms that the MLflow model is ready. Keep MLflow credentials and model settings on the backend deployment; do not place them in frontend secrets unless the frontend directly needs them.
-
-### FastAPI Cloud backend
-
-This repository declares the FastAPI Cloud entrypoint in `pyproject.toml`:
-
-```toml
-[tool.fastapi]
-entrypoint = "src.backend.main:app"
-```
-
-From the project root, install the standard FastAPI CLI and deploy:
-
-```bash
-pip install "fastapi[standard]"
-fastapi login
-fastapi dev                  # verify locally first
-fastapi deploy               # creates or updates the FastAPI Cloud app
-```
-
-FastAPI Cloud will provide a public URL such as `https://your-app.fastapicloud.dev`; the API documentation is available at `/docs` and the readiness endpoint at `/api/v1/health`. Configure the model service variables in FastAPI Cloud before or after deployment:
-
-```bash
-fastapi cloud env set MLFLOW_TRACKING_URI "https://dagshub.com/grvgulia007/burnout_classifier.mlflow"
-fastapi cloud env set MLFLOW_MODEL_URI "models:/burnout_classifier@champion"
-fastapi cloud env set --secret MLFLOW_TRACKING_USERNAME "your-mlflow-username"
-fastapi cloud env set --secret MLFLOW_TRACKING_PASSWORD "your-mlflow-password"
-```
-
-If Dagshub authentication is token-based, set the corresponding MLflow/Dagshub token variable required by your account instead of storing credentials in source control. After setting variables, redeploy if the CLI does not automatically redeploy them. Finally, copy the backend URL with `/api/v1` appended into the Streamlit Cloud `BACKEND_API_URL` secret.
 
 ---
 
