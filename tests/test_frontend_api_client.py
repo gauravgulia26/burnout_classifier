@@ -1,6 +1,7 @@
 import pytest
 import requests
 
+from src.cloud.main import _normalize_backend_url
 from src.frontend.services.api_client import BackendAPIClient, BackendAPIError
 
 
@@ -60,6 +61,15 @@ def test_client_normalizes_a_health_or_prediction_url_to_api_base():
     ):
         client = BackendAPIClient(configured_url)
         assert client.base_url == "https://api.example/api/v1"
+
+
+def test_cloud_entrypoint_normalizes_backend_secret():
+    for configured_url in (
+        "https://api.example",
+        "https://api.example/health",
+        "https://api.example/api/v1/predict",
+    ):
+        assert _normalize_backend_url(configured_url) == "https://api.example/api/v1"
 
 
 def test_client_returns_a_user_safe_error_for_connection_failures():

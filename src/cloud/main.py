@@ -18,6 +18,18 @@ def _read_secret(secrets: Any, key: str) -> str | None:
     return str(value).strip() if value else None
 
 
+def _normalize_backend_url(url: str) -> str:
+    """Convert a host or endpoint URL into the versioned API base URL."""
+    normalized_url = url.rstrip("/")
+    for suffix in ("/api/v1/health", "/api/v1/predict", "/health", "/predict"):
+        if normalized_url.endswith(suffix):
+            normalized_url = normalized_url[: -len(suffix)]
+            break
+    if not normalized_url.endswith("/api/v1"):
+        normalized_url = f"{normalized_url}/api/v1"
+    return normalized_url
+
+
 def _configure_backend_url() -> str | None:
     """Prefer Streamlit Cloud secrets, then support normal environment variables."""
     import streamlit as st
@@ -29,7 +41,8 @@ def _configure_backend_url() -> str | None:
 
     backend_url = _read_secret(secrets, "BACKEND_API_URL") or os.getenv("BACKEND_API_URL")
     if backend_url:
-        os.environ["BACKEND_API_URL"] = backend_url.rstrip("/")
+        backend_url = _normalize_backend_url(backend_url)
+        os.environ["BACKEND_API_URL"] = backend_url
     return backend_url
 
 
