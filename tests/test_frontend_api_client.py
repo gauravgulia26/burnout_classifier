@@ -41,6 +41,16 @@ def test_client_posts_the_backend_prediction_contract():
     ]
 
 
+def test_client_adds_api_prefix_when_given_only_a_backend_host():
+    client = BackendAPIClient("https://api.example")
+    session = FakeSession(FakeResponse({"status": "ok"}))
+    client._session = session
+
+    client.health()
+
+    assert session.calls[0][1] == "https://api.example/api/v1/health"
+
+
 def test_client_returns_a_user_safe_error_for_connection_failures():
     client = BackendAPIClient("http://api.example")
 

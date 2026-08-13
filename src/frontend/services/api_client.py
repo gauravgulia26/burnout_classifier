@@ -13,7 +13,12 @@ class BackendAPIClient:
     """Client for the versioned burnout-classifier API."""
 
     def __init__(self, base_url: str, timeout_seconds: float = 20.0) -> None:
-        self.base_url = base_url.rstrip("/")
+        normalized_url = base_url.rstrip("/")
+        self.base_url = (
+            normalized_url
+            if normalized_url.endswith("/api/v1")
+            else f"{normalized_url}/api/v1"
+        )
         self.timeout_seconds = timeout_seconds
         self._session = requests.Session()
 
@@ -45,4 +50,3 @@ class BackendAPIClient:
             return response.json()
         except ValueError as exc:
             raise BackendAPIError("The prediction service returned an invalid response.") from exc
-

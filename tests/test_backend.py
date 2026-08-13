@@ -43,3 +43,12 @@ def test_input_schema_rejects_invalid_values_and_unknown_fields():
         BurnoutInput.model_validate({**RECORD, "Tool_Diversity": 0})
     with pytest.raises(ValueError):
         BurnoutInput.model_validate({**RECORD, "unexpected": "field"})
+
+
+def test_app_exposes_root_health_for_cloud_probes():
+    from src.backend.core.config import Settings
+    from src.backend.main import create_app
+
+    app = create_app(Settings("http://mlflow.example", "models:/burnout_classifier@champion"))
+
+    assert any(route.path == "/health" for route in app.routes)

@@ -41,34 +41,11 @@ Student burnout is influenced by more than grades alone. This project turns a mi
 
 ---
 
-## 🏛️ System architecture
+## 🏛️ System Architecture
 
 <!-- Replace this Mermaid diagram with the supplied architecture image when available.
-     Recommended location: docs/assets/architecture-diagram.png
-     Markdown: ![Burnout Compass architecture](docs/assets/architecture-diagram.png) -->
-
-```mermaid
-flowchart LR
-    U[User] --> FE[Streamlit Frontend<br/>Port 8501]
-    FE -->|POST /api/v1/predict| API[FastAPI Backend<br/>Port 8000]
-    API --> ENG[Feature Engineering Service]
-    ENG -->|Inference| MODEL[MLflow PyFunc Model]
-    MODEL -->|Load champion model| MR[(MLflow Model Registry)]
-
-    D[Raw student data] --> P[DVC Pipeline]
-    P --> V[Validation & profiling]
-    V --> F[Feature engineering & transformation]
-    F --> E[Model experiments]
-    E --> T[Hyperparameter tuning]
-    T --> R[Model registration]
-    R --> MR
-
-    CI[GitHub Actions] -->|tests + dvc repro| P
-    CI -->|build & push| DH[Docker Hub]
-    DH --> C[Docker container]
-    C --> FE
-    C --> API
-```
+     <!-- Recommended location: docs/assets/architecture-diagram.png -->
+![](docs/assets/Architecture-Diagram.png)
 
 ### Runtime request flow
 
@@ -134,7 +111,8 @@ The backend in `src/backend` is a separate, modular inference layer.
 
 | Endpoint | Purpose |
 | --- | --- |
-| `GET /api/v1/health` | Confirms the API and model are available. |
+| `GET /health` | Root readiness endpoint for cloud platform probes. |
+| `GET /api/v1/health` | Versioned readiness endpoint used by the frontend. |
 | `POST /api/v1/predict` | Scores one or more validated student records. |
 
 ### Container — Docker
@@ -262,7 +240,7 @@ python main.py train
 BACKEND_API_URL = "https://your-backend-host.example.com/api/v1"
 ```
 
-The Cloud app shows a configuration message when this secret is missing and shows a waiting screen until the backend health endpoint confirms that the MLflow model is ready. Keep MLflow credentials and model settings on the backend deployment; do not place them in frontend secrets unless the frontend directly needs them.
+You may also provide only the backend host (`https://your-backend-host.example.com`); the frontend client automatically appends `/api/v1`. The Cloud app shows a configuration message when this secret is missing and shows a waiting screen until the backend health endpoint confirms that the MLflow model is ready. Keep MLflow credentials and model settings on the backend deployment; do not place them in frontend secrets unless the frontend directly needs them.
 
 ### FastAPI Cloud backend
 
