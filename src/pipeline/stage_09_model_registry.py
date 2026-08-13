@@ -20,6 +20,9 @@ from src.configs.paths import (
 )
 from src.entity.configs.model_registry_cfg import ModelRegistryConfig
 from src.utils.file_utils import dump_model_to_json, load_yaml
+from src.utils.service_utils import init_dagshub
+
+init_dagshub()
 
 
 def main(tracking_uri: str | None = None) -> dict:

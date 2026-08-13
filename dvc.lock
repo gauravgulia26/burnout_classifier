@@ -232,10 +232,14 @@ stages:
       hash: md5
       md5: d271a52a6037e9aae3eed25e5a54d105
       size: 515
+    - path: artifacts/transformation_artifact/preprocessor.joblib
+      hash: md5
+      md5: 09db5c5b2ee879bb11eb25ac58075549
+      size: 7645
     - path: configs/experiment_params.yaml
       hash: md5
-      md5: 06f8713d8f9d993d226858772cf3b388
-      size: 1817
+      md5: cfb38329ba7ffc6819e7b7e68430e7a6
+      size: 1737
     - path: src/components/model_tuner.py
       hash: md5
       md5: aa17bf9ac69408e0554165514207fb53
@@ -250,8 +254,8 @@ stages:
       size: 747
     - path: src/pipeline/stage_08_model_tuning.py
       hash: md5
-      md5: fa8e37d39632fc6a52bd8b1dc734c402
-      size: 2600
+      md5: 8e6dfd7169ae9fed6b6c2988ed008a84
+      size: 3511
     - path: src/tracking/mlflow_tracker.py
       hash: md5
       md5: e89a3ef3b83adef1dc49184d58d356fd
@@ -259,5 +263,65 @@ stages:
     outs:
     - path: artifacts/model_tuning_artifact/model_tuning.json
       hash: md5
-      md5: 3f6c9ff104843500e39503f9d15575b3
-      size: 407
+      md5: 91bf7e3ea09e0f30461c8ebd65f64e7d
+      size: 503
+    - path: models/burnout_classifier.joblib
+      hash: md5
+      md5: 4cca2a18b04a3b7f5141fe38a1d24cbd
+      size: 11825531
+  model_registry:
+    cmd: python src/pipeline/stage_09_model_registry.py
+    deps:
+    - path: artifacts/feature_engineer_artifact/feature_engineer.json
+      hash: md5
+      md5: b4c93ba3780417caf58b30ec6353583f
+      size: 108
+    - path: artifacts/model_tuning_artifact/model_tuning.json
+      hash: md5
+      md5: 91bf7e3ea09e0f30461c8ebd65f64e7d
+      size: 503
+    - path: artifacts/transformation_artifact/data_transformation.json
+      hash: md5
+      md5: d271a52a6037e9aae3eed25e5a54d105
+      size: 515
+    - path: configs/experiment_params.yaml
+      hash: md5
+      md5: cfb38329ba7ffc6819e7b7e68430e7a6
+      size: 1737
+    - path: configs/registry_params.yaml
+      hash: md5
+      md5: 9cc18c89e3803bf3c7d272ab7470b2e5
+      size: 901
+    - path: configs/schema.yaml
+      hash: md5
+      md5: fa71b142e0e3be39a939bba832c5924b
+      size: 708
+    - path: models/burnout_classifier.joblib
+      hash: md5
+      md5: 4cca2a18b04a3b7f5141fe38a1d24cbd
+      size: 11825531
+    - path: src/components/model_registry.py
+      hash: md5
+      md5: 9150f9326b60498edf37d79c9609e96d
+      size: 6341
+    - path: src/entity/artifacts/model_registry_artifact.py
+      hash: md5
+      md5: f2f3c2dbd9c939b58e4bbafc2eba411e
+      size: 582
+    - path: src/entity/configs/model_registry_cfg.py
+      hash: md5
+      md5: 9d621014547309de0a68a5848f4a855a
+      size: 686
+    - path: src/pipeline/stage_09_model_registry.py
+      hash: md5
+      md5: 301f2f3070181a5c9e1ae86a8ed9bec1
+      size: 2545
+    - path: src/tracking/mlflow_tracker.py
+      hash: md5
+      md5: e89a3ef3b83adef1dc49184d58d356fd
+      size: 2769
+    outs:
+    - path: artifacts/model_registry_artifact/model_registry.json
+      hash: md5
+      md5: d2d20cfe7906694d46724b337b4ecd07
+      size: 3145

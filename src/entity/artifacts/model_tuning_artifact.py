@@ -10,4 +10,6 @@ class ModelTuningArtifact(BaseModel):
     best_parameters: dict[str, Any]
     best_score: float
     tuning_time: float
-    model_path: str
+    # The tuner creates this intermediate object before the pipeline writes
+    # the inference bundle. Stage 08 fills the path before persisting it.
+    model_path: str | None = None

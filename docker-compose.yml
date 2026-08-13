@@ -1,0 +1,10 @@
+services:
+  burnout-app:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      # Override these for your MLflow tracking server and registered model.
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI:-https://dagshub.com/grvgulia007/burnout_classifier.mlflow}
+      MLFLOW_MODEL_URI: ${MLFLOW_MODEL_URI:-models:/burnout_classifier@champion}
+      BACKEND_API_URL: http://127.0.0.1:8000/api/v1

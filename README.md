@@ -18,7 +18,7 @@ Create an environment with Python 3.12, install dependencies, then train the ful
 
 ```bash
 pip install -r requirements.txt
-python main.py
+python main.py train
 ```
 
 This runs ingestion, schema validation, profiling, feature engineering, transformation, model selection, tuning, and registration. The tuning stage grid-searches the experiment-winning model and directly trains the refitted best estimator on the full training split, writing the inference-ready bundle to `models/burnout_classifier.joblib`.
@@ -46,6 +46,59 @@ python src/modeling/predict.py input.csv --predictions-path predictions.csv
 ```
 
 Run automated checks with `python -m pytest -q`. DVC users can reproduce individual stages with `dvc repro`.
+
+## Inference API
+
+The separate FastAPI backend lives in `src/backend`. It validates raw student records with Pydantic, generates the project features, and loads the registered MLflow model from the tracking server.
+
+Set the registry location (the defaults point to the registered `champion` model) and start the API:
+
+```bash
+export MLFLOW_TRACKING_URI=https://dagshub.com/grvgulia007/burnout_classifier.mlflow
+export MLFLOW_MODEL_URI='models:/burnout_classifier@champion'
+uvicorn src.backend.main:app --host 0.0.0.0 --port 8000
+```
+
+Send one or more records to `POST /api/v1/predict`; interactive API documentation is at `/docs`.
+
+## Streamlit frontend
+
+The separate Streamlit frontend in `src/frontend` sends assessments only through the FastAPI backend. Start the backend first, then run:
+
+```bash
+export BACKEND_API_URL=http://127.0.0.1:8000/api/v1
+streamlit run src/frontend/app.py
+```
+
+The frontend caches its reusable HTTP client and short-lived health checks; predictions are never cached.
+
+## Docker deployment
+
+One container runs the FastAPI model service internally and exposes the Streamlit interface on port `8501`. The root `main.py` starts Streamlit only after FastAPI confirms that the registered MLflow model is loaded; the frontend also displays a waiting screen if its API is unavailable. `serve` is the default command, while `train` runs the original complete training pipeline.
+
+```bash
+docker build -t burnout-classifier .
+docker run --rm -p 8501:8501 \
+  -e MLFLOW_TRACKING_URI="http://your-mlflow-server:5000" \
+  -e MLFLOW_MODEL_URI="models:/burnout_classifier@champion" \
+  burnout-classifier
+```
+
+Open [http://localhost:8501](http://localhost:8501). If the tracking server requires credentials, provide its standard MLflow authentication environment variables (for example `MLFLOW_TRACKING_USERNAME` and `MLFLOW_TRACKING_PASSWORD`) to `docker run` as well.
+
+Alternatively, configure the same variables in your shell and run `docker compose up --build`.
+
+## GitHub Actions CI/CD
+
+The workflow in `.github/workflows/ci-cd.yml` runs linting and tests on every push. On pushes to `main` (or a manual dispatch), it restores DVC data, force-reproduces the pipeline through `model_registry`, and publishes both `latest` and commit-SHA Docker Hub image tags. The deployed container loads the `champion` MLflow model alias at startup.
+
+Configure these repository secrets before enabling deployments:
+
+- `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` — Docker Hub account and access token.
+- `DAGSHUB_USER_TOKEN` — token permitted to log/register models to the configured Dagshub MLflow server.
+- `DVC_REMOTE_URL` — DVC remote URL containing the raw data and pipeline artifacts.
+- `DVC_REMOTE_USERNAME` and `DVC_REMOTE_PASSWORD` — required only for a protected DVC HTTP remote.
+- `MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_USERNAME`, and `MLFLOW_TRACKING_PASSWORD` — optional overrides when your MLflow server requires explicit configuration; Dagshub uses `DAGSHUB_USER_TOKEN`.
 
 ---
 
