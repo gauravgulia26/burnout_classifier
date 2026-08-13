@@ -269,17 +269,6 @@ Add these repository secrets before enabling deployment:
 | `DVC_REMOTE_USERNAME` / `DVC_REMOTE_PASSWORD` | Optional credentials for protected DVC HTTP remotes. |
 | `MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_USERNAME`, `MLFLOW_TRACKING_PASSWORD` | Optional MLflow server overrides and credentials. |
 
----
-
-## 📌 Resume highlights
-
-- Built a modular MLOps system for multi-class student burnout-risk prediction.
-- Implemented experiment tracking, model signatures, model registry aliases, and runtime MLflow model loading.
-- Designed a validated FastAPI inference layer and a readiness-aware Streamlit user experience.
-- Containerized the complete application and automated testing, model reproduction, registration, and Docker Hub publishing with GitHub Actions.
-
----
-
 ## 📄 License
 
 Distributed under the [BSD License](LICENSE).
