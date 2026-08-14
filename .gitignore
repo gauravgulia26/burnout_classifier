@@ -198,3 +198,4 @@ models/*.joblib
 notebooks/
 
 data/
+data
