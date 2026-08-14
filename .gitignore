@@ -197,5 +197,6 @@ models/*.joblib
 .vscode/
 notebooks/
 
-data/
+
 data
+.dvc/config.local

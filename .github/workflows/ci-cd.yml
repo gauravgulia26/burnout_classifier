@@ -14,10 +14,21 @@ permissions:
   contents: read
 
 jobs:
+
+  # ============================================================
+  # TEST
+  # ============================================================
   test:
     name: Run tests
     runs-on: ubuntu-latest
+
+    env:
+      DVC_REMOTE_URL: ${{ secrets.DVC_REMOTE_URL }}
+      DVC_REMOTE_USERNAME: ${{ secrets.DVC_REMOTE_USERNAME }}
+      DVC_REMOTE_PASSWORD: ${{ secrets.DVC_REMOTE_PASSWORD }}
+
     steps:
+
       - name: Check out source
         uses: actions/checkout@v4
 
@@ -30,6 +41,32 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Configure DVC remote
+        shell: bash
+        run: |
+          test -n "$DVC_REMOTE_URL" || {
+            echo "DVC_REMOTE_URL secret is required."
+            exit 1
+          }
+
+          test -n "$DVC_REMOTE_USERNAME" || {
+            echo "DVC_REMOTE_USERNAME secret is required."
+            exit 1
+          }
+
+          test -n "$DVC_REMOTE_PASSWORD" || {
+            echo "DVC_REMOTE_PASSWORD secret is required."
+            exit 1
+          }
+
+          dvc remote add --local --force ci "$DVC_REMOTE_URL"
+          dvc remote modify --local ci auth basic
+          dvc remote modify --local ci user "$DVC_REMOTE_USERNAME"
+          dvc remote modify --local ci password "$DVC_REMOTE_PASSWORD"
+
+      - name: Restore DVC data
+        run: dvc pull --remote ci
 
       - name: Lint application code
         run: ruff check main.py src/backend src/frontend tests
@@ -37,22 +74,32 @@ jobs:
       - name: Run test suite
         run: python -m pytest -q
 
+
+  # ============================================================
+  # REPRODUCE + REGISTER + DOCKER
+  # ============================================================
   register-and-publish:
     name: Reproduce model and publish Docker image
+
     needs: test
-    # Image publishing and model registration are protected operations. They
-    # happen only after tests succeed on main, or when explicitly dispatched.
+
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
     runs-on: ubuntu-latest
+
     env:
       DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_USER_TOKEN }}
+
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
       MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
       MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+
       DVC_REMOTE_URL: ${{ secrets.DVC_REMOTE_URL }}
       DVC_REMOTE_USERNAME: ${{ secrets.DVC_REMOTE_USERNAME }}
       DVC_REMOTE_PASSWORD: ${{ secrets.DVC_REMOTE_PASSWORD }}
+
     steps:
+
       - name: Check out source
         uses: actions/checkout@v4
 
@@ -66,25 +113,42 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Configure and restore DVC data
+      - name: Configure DVC remote
         shell: bash
         run: |
-          test -n "$DVC_REMOTE_URL" || { echo "DVC_REMOTE_URL secret is required."; exit 1; }
+          test -n "$DVC_REMOTE_URL" || {
+            echo "DVC_REMOTE_URL secret is required."
+            exit 1
+          }
+
+          test -n "$DVC_REMOTE_USERNAME" || {
+            echo "DVC_REMOTE_USERNAME secret is required."
+            exit 1
+          }
+
+          test -n "$DVC_REMOTE_PASSWORD" || {
+            echo "DVC_REMOTE_PASSWORD secret is required."
+            exit 1
+          }
+
           dvc remote add --local --force ci "$DVC_REMOTE_URL"
-          if [ -n "$DVC_REMOTE_USERNAME" ]; then
-            dvc remote modify --local ci auth basic
-            dvc remote modify --local ci user "$DVC_REMOTE_USERNAME"
-            dvc remote modify --local ci password "$DVC_REMOTE_PASSWORD"
-          fi
-          dvc pull --remote ci
+          dvc remote modify --local ci auth basic
+          dvc remote modify --local ci user "$DVC_REMOTE_USERNAME"
+          dvc remote modify --local ci password "$DVC_REMOTE_PASSWORD"
+
+      - name: Restore DVC data
+        run: dvc pull --remote ci
 
       - name: Reproduce and register the current model
         shell: bash
         run: |
-          test -n "$DAGSHUB_USER_TOKEN" || { echo "DAGSHUB_USER_TOKEN secret is required."; exit 1; }
-          # --force deliberately retrains and registers on every deployment
-          # commit, updating the MLflow `champion` alias used by the container.
-          dvc repro --force model_registry
+          test -n "$DAGSHUB_USER_TOKEN" || {
+            echo "DAGSHUB_USER_TOKEN secret is required."
+            exit 1
+          }
+
+          # Force retraining and registration on deployment.
+          dvc repro
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
