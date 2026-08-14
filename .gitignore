@@ -1,5 +1,8 @@
 # Data
-/data/
+data/*
+!data/raw/
+data/raw/*
+!data/raw/raw_data.csv.dvc
 
 # Mac OS-specific storage files
 .DS_Store
@@ -198,5 +201,4 @@ models/*.joblib
 notebooks/
 
 
-data
 .dvc/config.local
